@@ -10,17 +10,18 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
+            overflow-y: auto; /* Enable vertical scrolling */
             background: #001b3d;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             font-family: Arial, sans-serif;
             color: white;
         }
 
-        .container-marks, .container-results {
+        .container-marks,
+        .container-results {
             display: flex;
             flex-direction: column;
             width: 600px;
@@ -59,7 +60,8 @@
         }
 
         @media (max-width: 700px) {
-            .container-marks, .container-results {
+            .container-marks,
+            .container-results {
                 width: 85%;
                 padding: 15px;
             }
