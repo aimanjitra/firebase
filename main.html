@@ -18,41 +18,26 @@
             font-family: Arial, sans-serif;
             color: white;
         }
-        .container {
-            height: 80vh;
+        .container-login {
             display: flex;
             flex-direction: column;
-        }
-        .middle-section {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        .container-login, .container-marks, .container-results {
-            display: flex;
-            flex-direction: column;
-            width: 600px; /* Increased width */
+            width: 450px;
             padding: 15px;
             border: 1px solid skyblue;
             border-radius: 5px;
             margin: 10px;
             background-color: rgba(255, 255, 255, 0.8);
-            color: black; /* Set font color to black */
             z-index: 1;
         }
         .input-group {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
         }
-        input, select {
+        input {
+            flex: 1;
             margin: 10px 0;
-            height: 45px;
+            height: 35px;
             padding: 7px;
-            width: 100%;
-            box-sizing: border-box;
-            color: black;
         }
         button {
             height: 45px;
@@ -66,17 +51,6 @@
         button:hover {
             background-color: #333;
             color: skyblue;
-        }
-        #nextPageButton {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-        @media (max-width: 700px) {
-            .container-login, .container-marks, .container-results {
-                width: 85%;
-                padding: 15px;
-            }
         }
     </style>
 </head>
@@ -94,59 +68,16 @@
         </form>
     </div>
 
-    <div class="container-marks" style="display: none;">
-        <form id="marksForm">
-            <div class="input-group">
-                <label for="subjectCode">Select Subject:</label>
-                <select id="subjectCode" required>
-                    <option value="" disabled selected>Select Subject</option>
-                    <option value="uzw164">UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I</option>
-                    <option value="uuw130">UUW130 - FALSAFAH DAN ISU SEMASA</option>
-                    <option value="ekt102">EKT102 - ASAS KEJURUTERAAN ELEKTRONIK</option>
-                    <option value="eqt101">EQT101 - MATEMATIK KEJURUTERAAN I</option>
-                    <option value="ekt120">EKT120 - PENGATURCARAAN KOMPUTER</option>
-                    <option value="ekt101">EKT101 - TEORI LITAR ELEKTRIK</option>
-                </select>
-                <label for="subjectGrade">Select Grade:</label>
-                <select id="subjectGrade" required>
-                    <option value="" disabled selected>Select Grade</option>
-                    <option value="A+">A+</option>
-                    <option value="A">A</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B">B</option>
-                    <option value="B-">B-</option>
-                    <option value="C+">C+</option>
-                    <option value="C">C</option>
-                    <option value="C-">C-</option>
-                    <option value="D+">D+</option>
-                    <option value="D">D</option>
-                    <option value="D-">D-</option>
-                    <option value="F">F</option>
-                </select>
-            </div>
-            <button type="submit">Submit Mark</button>
-        </form>
-    </div>
-
-    <div class="container-results" style="display: none;">
-        <h3>Semester 1</h3>
-        <ul id="resultsList"></ul>
-        <div id="nextPageButton">
-            <button onclick="window.location.href='nextPage.html'">Result</button>
-        </div>
-    </div>
-
     <!-- Include Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-        import { getDatabase, ref, get, set, update, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDyXr6XMGjgv8XG1U0Owly-PWvAQE7wZY4",
+            apiKey: "YOUR_API_KEY",
             authDomain: "academic-student-a62c6.firebaseapp.com",
             databaseURL: "https://academic-student-a62c6-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "academic-student-a62c6",
@@ -161,16 +92,6 @@
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        // Mapping subject codes to full subject names
-        const subjectMapping = {
-            "uzw164": "UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I",
-            "uuw130": "UUW130 - FALSAFAH DAN ISU SEMASA",
-            "ekt102": "EKT102 - ASAS KEJURUTERAAN ELEKTRONIK",
-            "eqt101": "EQT101 - MATEMATIK KEJURUTERAAN I",
-            "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
-            "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
-        };
-
         // Function to verify username and password
         function verifyUser(username, password) {
             const dbRef = ref(database);
@@ -183,12 +104,14 @@
                         if (userData.username === username && userData.password === password) {
                             authenticated = true;
                             userId = userSnapshot.key;
-                            document.querySelector('.container-login').style.display = 'none';
-                            document.querySelector('.container-marks').style.display = 'block';
 
                             // Store the userId for later use
                             sessionStorage.setItem('userId', userId);
-                            loadSubmittedData(userId);
+                            sessionStorage.setItem('username', username);
+                            sessionStorage.setItem('password', password);
+
+                            // Redirect to marks page
+                            window.location.href = '///C:/Users/DELL/Downloads/web/.vscode/.vscode/try2.html?username=user1&password=v';
                         }
                     });
                     if (!authenticated) {
@@ -202,90 +125,12 @@
             });
         }
 
-        // Function to add subject grade to Realtime Database
-        function addSubjectGrade(subjectCode, grade) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-            const updates = {};
-            updates['/users/' + userId + '/subjects/' + subjectCode] = { grade: grade };
-            return update(ref(database), updates).then(() => {
-                console.log('Subject grade added successfully.');
-                displaySubmittedData(subjectCode, grade);
-                checkAllSubjectsSubmitted();
-            }).catch((error) => {
-                console.error('Error adding subject grade:', error);
-            });
-        }
-
-        // Function to load submitted data and display it
-        function loadSubmittedData(userId) {
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const resultsList = document.getElementById('resultsList');
-                    resultsList.innerHTML = ''; // Clear existing data
-                    snapshot.forEach((subjectSnapshot) => {
-                        const subject = subjectSnapshot.key;
-                        const grade = subjectSnapshot.val().grade;
-                        displaySubmittedData(subject, grade);
-                    });
-                    document.querySelector('.container-results').style.display = 'block';
-                    checkAllSubjectsSubmitted();
-                }
-            }).catch((error) => {
-                console.error('Error loading submitted data:', error);
-            });
-        }
-
-        // Function to display submitted data on the page
-        function displaySubmittedData(subjectCode, grade) {
-            const resultsList = document.getElementById('resultsList');
-            const listItem = document.createElement('li');
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-            listItem.textContent = `${subjectFullName}: ${grade}`;
-            resultsList.appendChild(listItem);
-            document.querySelector('.container-results').style.display = 'block';
-        }
-
-        // Function to check if all subjects are submitted
-        function checkAllSubjectsSubmitted() {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
-                if (snapshot.exists() && snapshot.size === 6) { // Check if 6 subjects are submitted
-                    document.getElementById('nextPageButton').style.display = 'block';
-                }
-            }).catch((error) => {
-                console.error('Error checking subjects:', error);
-            });
-        }
-
         // Event listener for login form submission
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             verifyUser(username, password);
-        });
-
-        // Event listener for marks form submission
-        document.getElementById('marksForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const subjectCode = document.getElementById('subjectCode').value;
-            const grade = document.getElementById('subjectGrade').value;
-            
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-            const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectFullName}?`);
-            if (confirmation) {
-                addSubjectGrade(subjectCode, grade);
-            }
         });
     </script>
 </body>
