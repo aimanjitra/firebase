@@ -301,40 +301,30 @@
         }
 
         // Function to delete only the grade of a subject
-        async function deleteSubject(subjectCode) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
+            async function deleteSubject(subjectCode) {
+                const userId = sessionStorage.getItem('userId');
+                if (!userId) {
+                    console.error('No user signed in');
+                    return;
+                }
 
-            // Confirm before deleting the subject
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode;
-            const confirmation = confirm(`Are you sure you want to delete the subject ${subjectFullName}?`);
-            if (!confirmation) {
-                return;
-            }
+                const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
 
-            const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
-
-            // Check if the subject exists in the database
-            const snapshot = await get(dbRef);
-            if (snapshot.exists()) {
-                // If the subject exists, set the grade to null
-                const gradeRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode + '/grade');
-                set(gradeRef, null).then(() => {
-                    console.log('Grade removed successfully.');
-                    alert(`Subject ${subjectFullName} deleted successfully.`);
-                    loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-                }).catch((error) => {
-                    console.error('Error removing grade:', error);
-                    alert(`Failed to delete subject ${subjectFullName}.`);
-                });
-            } else {
-                console.error('Subject does not exist in the database.');
-                alert(`Subject ${subjectFullName} does not exist.`);
+                // Check if the subject exists in the database
+                const snapshot = await get(dbRef);
+                if (snapshot.exists()) {
+                    // If the subject exists, set the grade to null
+                    const gradeRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode + '/grade');
+                    set(gradeRef, null).then(() => {
+                        console.log('Grade removed successfully.');
+                        loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+                    }).catch((error) => {
+                        console.error('Error removing grade:', error);
+                    });
+                } else {
+                    console.error('Subject does not exist in the database.');
+                }
             }
-        }
 
 
         // Function to check if all subjects are submitted
