@@ -310,33 +310,34 @@
             document.querySelector('.container-results').style.display = 'block';
         }
 
-       // Function to delete only the grade of a subject
-async function deleteSubject(subjectCode) {
+      // Combined function to delete the grade of a subject and the subject itself
+async function deleteSubject(subjectFullName) {
     const userId = sessionStorage.getItem('userId');
     if (!userId) {
         console.error('No user signed in');
         return;
     }
 
-    // Confirm before deleting the subject
-    const subjectFullName = subjectMapping[subjectCode] || subjectCode;
-    const confirmation = confirm(`Are you sure you want to delete the subject ${subjectFullName}?`);
-    if (!confirmation) {
+    const subjectCode = Object.keys(subjectMapping).find(key => subjectMapping[key] === subjectFullName);
+    if (!subjectCode) {
+        console.error('Subject code not found for:', subjectFullName);
         return;
     }
 
-    const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
+    const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode.toLowerCase());
 
-    // Check if the subject exists in the database
-    const snapshot = await get(dbRef);
-    if (snapshot.exists()) {
-        // If the subject exists, remove the subject and its grade
-        await remove(dbRef);
-        alert(`Subject ${subjectFullName} deleted successfully.`);
-        loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-    } else {
-        console.error('Subject does not exist in the database.');
-        alert(`Subject ${subjectFullName} does not exist.`);
+    try {
+        // Check if the subject exists in the database
+        const snapshot = await get(dbRef);
+        if (snapshot.exists()) {
+            // If the subject exists, remove the subject and its grade
+            await remove(dbRef);
+            loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+        } else {
+            console.error('Subject does not exist in the database.');
+        }
+    } catch (error) {
+        console.error('Error removing subject and grade:', error);
     }
 }
 
