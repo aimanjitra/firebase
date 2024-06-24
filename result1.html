@@ -230,7 +230,7 @@
                     <th>Code Subject</th>
                     <th>Name of Subject</th>
                     <th>Credit Hour</th>
-                    <th>Result of CGPA</th>
+                    <th>Subject Mark</th>
                     <th>Result (Pass/Fail)</th>
                 </tr>
         
@@ -535,7 +535,7 @@
             // Display suggested subjects recommended by lecturer
             schedule += `
                 <h3>Suggested Subjects Recommended by Lecturer</h3>
-                <ul>
+                <ol>
             `;
 
             // Lecturer recommended subjects
@@ -579,12 +579,12 @@
             }
 
             // Close the unordered list tag for lecturers
-            schedule += '</ul>';
+            schedule += '</ol>';
 
             // Display suggested subjects recommended by students
             schedule += `
                 <h3>Suggested Subjects Recommended by Students</h3>
-                <ul>
+                <ol>
             `;
 
             // Student recommended subjects
@@ -629,7 +629,7 @@
             }
 
             // Close the unordered list tag for students
-            schedule += '</ul>';
+            schedule += '</ol>';
 
             // Update the HTML content
             const newSchedule1 = document.getElementById('newSchedule1');
