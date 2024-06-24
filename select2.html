@@ -95,8 +95,11 @@
         @media (max-width: 600px) {
             body,
             html {
-                justify-content: center; /* Center vertically */
+                justify-content: flex-start; /* Start content from the top */
+                align-items: center; /* Center horizontally */
                 transform: scale(0.9); /* Scale down to 90% */
+                transform-origin: top center; /* Ensure scaling is centered from the top */
+                height: auto; /* Allow height to adjust based on content */
             }
         
             .container-marks,
@@ -106,6 +109,7 @@
                 margin: 0 auto; /* Center the container horizontally */
             }
         }
+
     </style>
 </head>
 
