@@ -92,13 +92,16 @@
             margin-bottom: 10px;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
+            body,
+            html {
+                justify-content: center; /* Center vertically */
+            }
+        
             .container-marks,
             .container-results {
                 width: 85%;
                 padding: 15px;
-                transform: scale(0.9); /* Scale down to 90% */
-                transform-origin: center; /* Ensure scaling is centered */
                 margin: 0 auto; /* Center the container horizontally */
             }
         }
