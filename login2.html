@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marks Submission</title>
+    <title>Sistem Log in UniMAP</title>
     <style>
-        body,
-        html {
+        body, html {
             margin: 0;
             padding: 0;
             height: 100%;
@@ -19,30 +18,27 @@
             font-family: Arial, sans-serif;
             color: white;
         }
-
-        .container-marks, .container-results {
+        .container-login {
             display: flex;
             flex-direction: column;
-            width: 600px;
+            width: 450px;
             padding: 15px;
             border: 1px solid skyblue;
             border-radius: 5px;
-            margin: 5px;
+            margin: 10px;
             background-color: rgba(255, 255, 255, 0.8);
-            color: black;
             z-index: 1;
         }
-
-        .container-marks .input-group {
+        .input-group {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
         }
-
-        .container-marks label,
-        .container-marks select {
-            margin: 2px 0;
+        input {
+            flex: 1;
+            margin: 10px 0;
+            height: 35px;
+            padding: 7px;
         }
-
         button {
             height: 45px;
             width: 100%;
@@ -52,75 +48,36 @@
             color: #333;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #333;
             color: skyblue;
         }
-
-        @media (max-width: 700px) {
-            .container-marks, .container-results {
-                width: 85%;
-                padding: 15px;
-            }
-        }
     </style>
 </head>
-<div class="header">
-    <h1>Semester 1</h1>
-</div>
 <body>
-    <div class="container-marks">
-        <form id="marksForm">
+    <div class="header">
+        <h1>System Log In</h1>
+    </div>
+    <div class="container-login">
+        <form id="loginForm">
             <div class="input-group">
-                <label for="subjectCode">Select Subject:</label>
-                <select id="subjectCode" required>
-                    <option value="" disabled selected>Select Subject</option>
-                    <option value="uzw164">UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I</option>
-                    <option value="uuw130">UUW130 - FALSAFAH DAN ISU SEMASA</option>
-                    <option value="ekt102">EKT102 - ASAS KEJURUTERAAN ELEKTRONIK</option>
-                    <option value="eqt101">EQT101 - MATEMATIK KEJURUTERAAN I</option>
-                    <option value="ekt120">EKT120 - PENGATURCARAAN KOMPUTER</option>
-                    <option value="ekt101">EKT101 - TEORI LITAR ELEKTRIK</option>
-                </select>
-                <label for="subjectGrade">Select Grade:</label>
-                <select id="subjectGrade" required>
-                    <option value="" disabled selected>Select Grade</option>
-                    <option value="A">A</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B">B</option>
-                    <option value="B-">B-</option>
-                    <option value="C+">C+</option>
-                    <option value="C">C</option>
-                    <option value="C-">C-</option>
-                    <option value="D+">D+</option>
-                    <option value="D">D</option>
-                    <option value="D-">D-</option>
-                    <option value="F">F</option>
-                </select>
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
             </div>
-            <button type="submit">Submit Mark</button>
+            <button type="submit">Log In</button>
         </form>
     </div>
 
-    <div class="container-results" style="display: none;">
-        <h3>Semester 1</h3>
-        <ul id="resultsList"></ul>
-        <div id="nextPageButton" style="display: none;">
-            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/result1.html?username=user1&password=v'">Result</button>
-        </div>
-    </div>
-
+    <!-- Include Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-        import { getDatabase, ref, get, set, update, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDyXr6XMGjgv8XG1U0Owly-PWvAQE7wZY4",
+            apiKey: "YOUR_API_KEY",
             authDomain: "academic-student-a62c6.firebaseapp.com",
             databaseURL: "https://academic-student-a62c6-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "academic-student-a62c6",
@@ -135,112 +92,45 @@
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        // Mapping subject codes to full subject names
-        const subjectMapping = {
-            "uzw164": "UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I",
-            "uuw130": "UUW130 - FALSAFAH DAN ISU SEMASA",
-            "ekt102": "EKT102 - ASAS KEJURUTERAAN ELEKTRONIK",
-            "eqt101": "EQT101 - MATEMATIK KEJURUTERAAN I",
-            "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
-            "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
-        };
-
-        // Function to add or update subject grade in Realtime Database
-        function addSubjectGrade(subjectCode, grade) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-
-            const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
-            set(dbRef, { grade: grade }).then(() => {
-                console.log('Subject grade added or updated successfully.');
-                loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-            }).catch((error) => {
-                console.error('Error adding or updating subject grade:', error);
-            });
-        }
-
-        // Function to load submitted data and display it
-        function loadSubmittedData(userId) {
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
+        // Function to verify username and password
+        function verifyUser(username, password) {
+            const dbRef = ref(database);
+            get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
-                    const resultsList = document.getElementById('resultsList');
-                    resultsList.innerHTML = ''; // Clear existing data
-                    snapshot.forEach((subjectSnapshot) => {
-                        const subject = subjectSnapshot.key;
-                        const grade = subjectSnapshot.val().grade;
-                        displaySubmittedData(subject, grade);
+                    let authenticated = false;
+                    let userId = null;
+                    snapshot.forEach((userSnapshot) => {
+                        const userData = userSnapshot.val();
+                        if (userData.username === username && userData.password === password) {
+                            authenticated = true;
+                            userId = userSnapshot.key;
+
+                            // Store the userId for later use
+                            sessionStorage.setItem('userId', userId);
+                            sessionStorage.setItem('username', username);
+                            sessionStorage.setItem('password', password);
+
+                            // Redirect to marks page
+                            window.location.href = 'https://aimanjitra.github.io/firebase/result1.html?username=user1&password=v';
+                        }
                     });
-                    document.querySelector('.container-results').style.display = 'block';
-                    checkAllSubjectsSubmitted();
-                }
-            }).catch((error) => {
-                console.error('Error loading submitted data:', error);
-            });
-        }
-
-        // Function to display submitted data on the page
-        function displaySubmittedData(subjectCode, grade) {
-            // Check if the subject is in Semester 1
-            const semester1Subjects = ["uzw164", "uuw130", "ekt102", "eqt101", "ekt120", "ekt101"];
-            if (semester1Subjects.includes(subjectCode)) {
-                const resultsList = document.getElementById('resultsList');
-                const listItem = document.createElement('li');
-                const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-                listItem.textContent = `${subjectFullName}: ${grade}`;
-                resultsList.appendChild(listItem);
-                document.querySelector('.container-results').style.display = 'block';
-            }
-        }
-
-        // Function to check if all subjects are submitted
-        function checkAllSubjectsSubmitted() {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
-                const semester1Subjects = ["uzw164", "uuw130", "ekt102", "eqt101", "ekt120", "ekt101"];
-                let submittedSubjects = new Set();
-                snapshot.forEach((subjectSnapshot) => {
-                    submittedSubjects.add(subjectSnapshot.key);
-                });
-
-                // Check if all semester 1 subjects are submitted
-                const allSubmitted = semester1Subjects.every(subject => submittedSubjects.has(subject));
-
-                if (allSubmitted) {
-                    document.getElementById('nextPageButton').style.display = 'block';
+                    if (!authenticated) {
+                        alert('Invalid username or password.');
+                    }
                 } else {
-                    document.getElementById('nextPageButton').style.display = 'none';
+                    console.log("No data available");
                 }
             }).catch((error) => {
-                console.error('Error checking subjects:', error);
+                console.error('Error reading user data:', error);
             });
         }
 
-        // Retrieve stored userId from sessionStorage
-        const userId = sessionStorage.getItem('userId');
-        if (userId) {
-            loadSubmittedData(userId);
-        }
-
-        // Event listener for marks form submission
-        document.getElementById('marksForm').addEventListener('submit', (e) => {
+        // Event listener for login form submission
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const subjectCode = document.getElementById('subjectCode').value;
-            const grade = document.getElementById('subjectGrade').value;
-            
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-            const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectFullName}?`);
-            if (confirmation) {
-                addSubjectGrade(subjectCode, grade);
-            }
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            verifyUser(username, password);
         });
     </script>
 </body>
