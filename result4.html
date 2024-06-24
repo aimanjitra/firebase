@@ -200,8 +200,8 @@
             <h2 id="matric">No Matric: [No Matric]</h2>
             <h2 id="course">Course: [Course]</h2>
             <h2 id="codeCourse">Code Course: [Code Course]</h2>
-            <h2 id="year">Year: [Year]</h2>
-            <h2 id="semester">Semester: [Semester]</h2>
+            <h2 id="year">Current Year: [Year]</h2>
+            <h2 id="semester">Current Semester: [Semester]</h2>
         </div>
 
         <div class="semester-selector-container">
@@ -329,8 +329,8 @@
                 document.getElementById('matric').textContent = `No Matric: ${userData.matrik}`;
                 document.getElementById('course').textContent = `Course: ${userData.Course}`;
                 document.getElementById('codeCourse').textContent = `Code Course: ${userData.Code}`;
-                document.getElementById('year').textContent = `Year: ${userData.Year}`;
-                document.getElementById('semester').textContent = `Semester: ${userData.Semester}`;
+                document.getElementById('year').textContent = `Current Year: ${userData.Year}`;
+                document.getElementById('semester').textContent = `Current Semester: ${userData.Semester}`;
 
                 let totalCreditHours = 0;
                 let totalGpaPoints = 0;
@@ -473,8 +473,8 @@
                     const prioritizedSubjects = ['SMB31202', 'EQT101', 'SMQ22103', 'NMJ31403', 'EKT120', 'NMJ31603', 'NMJ32203', 'NMJ32903', 'NMJ20904', 'NMJ30504', 'EKT102', 'NMJ20404', 'NMJ20003', 'EKT101'];
                     const prioritizedSubjectsLecturer = ['SMB31202', 'EQT101', 'EKT120', 'EKT102', 'EKT101', 'SMQ22103', 'NMJ20904', 'NMJ20404', 'NMJ20003', 'NMJ31403', 'NMJ31603', 'NMJ32203', 'NMJ32903', 'NMJ30504'];
 
-                    schedule1 += '<h3>Suggested Subjects Recommended by Lecturer</h3>';
-                    schedule1 += '<ul>';
+                    schedule1 += '<h3>Suggested Subjects Ranked by Lecturer</h3>';
+                    schedule1 += '<ol>';
                     const addedSubjectsLecturer = new Set();
 
                     for (const subjectCode of prioritizedSubjectsLecturer) {
@@ -491,10 +491,10 @@
                             schedule1 += `<li>${subject.code.toUpperCase()} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule1 += '</ul>';
+                    schedule1 += '</ol>';
 
-                    schedule2 += '<h3>Suggested Subjects Recommended by Students</h3>';
-                    schedule2 += '<ul>';
+                    schedule2 += '<h3>Suggested Subjects Ranked by Students</h3>';
+                    schedule2 += '<ol>';
                     const addedSubjectsStudent = new Set();
 
                     for (const subjectCode of prioritizedSubjects) {
@@ -511,7 +511,7 @@
                             schedule2 += `<li>${subject.code.toUpperCase()} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule2 += '</ul>';
+                    schedule2 += '</ol>';
 
                     const newSchedule4 = document.getElementById('newSchedule4');
                     newSchedule4.innerHTML = schedule;
