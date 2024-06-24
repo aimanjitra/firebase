@@ -219,7 +219,7 @@
             </div>
         </div>        
         <div class="navigation-button-container">
-            <button id="previousResult" class="navigation-button">Previous Result</button>
+            <button id="previousResult" class="navigation-button">Previous Selection</button>
             <button id="nextSemester" class="navigation-button">Next Semester</button>
             <button id="logoutButton" class="navigation-button">Logout</button>
         </div>
@@ -503,7 +503,7 @@
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
 
                     // Suggested subjects recommended by lecturers
-                    schedule1 += '<h3>Suggested Subjects Recommended by Lecturer</h3>';
+                    schedule1 += '<h3>Suggested Subjects Ranked by Lecturer</h3>';
                     schedule1 += '<ul>';
                     const addedSubjectsLecturer = new Set();
 
@@ -531,7 +531,7 @@
                     schedule1 += '</ul>';
 
                     // Suggested subjects recommended by students
-                    schedule2 += '<h3>Suggested Subjects Recommended by Students</h3>';
+                    schedule2 += '<h3>Suggested Subjects Ranked by Students</h3>';
                     schedule2 += '<ul>';
                     const addedSubjectsStudent = new Set();
 
