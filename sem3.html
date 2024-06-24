@@ -173,7 +173,7 @@
             <h2 id="course">Course: [Course]</h2>
             <h2 id="codeCourse">Code Course: [Code Course]</h2>
             <h2 id="year">Year: [Year]</h2>
-            <h2 id="semester">Semester: [Semester]</h2>
+            <h2 id="semester">Current Semester: [Semester]</h2>
         </div>
         
         <div class="semester-selector-container">
@@ -402,9 +402,9 @@
                     const finalRow = `
                         <tr>
                             <td id="blankCell"></td>
-                            <td id="GPA3">GPA: ${GPA3.toFixed(2)}</td>
+                            <td id="GPA3">CGPA: ${GPA3.toFixed(2)}</td>
                             <td id="total">${totalCreditHours}</td>
-                            <td id="CGPA3">CGPA: ${CGPA3.toFixed(2)}</td>
+                            <td id="CGPA3">GPA: ${CGPA3.toFixed(2)}</td>
                             <td id="DetectSemester3">${detectSemester3}</td>
                         </tr>
                     `;
@@ -490,7 +490,7 @@
 
                     // Suggested subjects recommended by lecturers
                     schedule1 += '<h3>Suggested Subjects Recommended by Lecturer</h3>';
-                    schedule1 += '<ul>';
+                    schedule1 += '<ol>';
                     const addedSubjectsLecturer = new Set();
 
                     for (const subjectCode of prioritizedSubjectsLecturer) {
@@ -507,11 +507,11 @@
                             schedule1 += `<li>${subject.code.toUpperCase()} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule1 += '</ul>';
+                    schedule1 += '</ol>';
 
                     // Suggested subjects recommended by students
                     schedule2 += '<h3>Suggested Subjects Recommended by Students</h3>';
-                    schedule2 += '<ul>';
+                    schedule2 += '<ol>';
                     const addedSubjectsStudent = new Set();
 
                     for (const subjectCode of prioritizedSubjects) {
@@ -528,7 +528,7 @@
                             schedule2 += `<li>${subject.code.toUpperCase()} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule2 += '</ul>';
+                    schedule2 += '</ol>';
 
                     const newSchedule3 = document.getElementById('newSchedule3');
                     newSchedule3.innerHTML = schedule;
