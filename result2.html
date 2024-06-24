@@ -359,8 +359,8 @@
                 document.getElementById('matric').textContent = `No Matric: ${userData.matrik}`;
                 document.getElementById('course').textContent = `Course: ${userData.Course}`;
                 document.getElementById('codeCourse').textContent = `Code Course: ${userData.Code}`;
-                document.getElementById('year').textContent = `Year: ${userData.Year}`;
-                document.getElementById('semester').textContent = `Semester: ${userData.Semester}`;
+                document.getElementById('year').textContent = `Current Year: ${userData.Year}`;
+                document.getElementById('semester').textContent = `Current Semester: ${userData.Semester}`;
 
                 let totalCreditHours = 0;
                 let totalGpaPoints = 0;
@@ -423,9 +423,9 @@
                     const finalRow = `
                         <tr>
                             <td id="blankCell"></td>
-                            <td id="GPA2">GPA: ${GPA2.toFixed(2)}</td>
+                            <td id="GPA2">CGPA: ${GPA2.toFixed(2)}</td>
                             <td id="total">${totalCreditHours}</td>
-                            <td id="CGPA2">CGPA: ${CGPA2.toFixed(2)}</td>
+                            <td id="CGPA2">GPA: ${CGPA2.toFixed(2)}</td>
                             <td id="DetectSemester2">${detectSemester2}</td>
                         </tr>
                     `;
@@ -504,8 +504,8 @@
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
 
                     // Suggested subjects recommended by lecturers
-                    schedule1 += '<h3>Suggested Subjects Recommended by Lecturer</h3>';
-                    schedule1 += '<ul>';
+                    schedule1 += '<h3>Suggested Subjects Ranked by Lecturer</h3>';
+                    schedule1 += '<ol>';
                     const addedSubjectsLecturer = new Set();
 
                     const firstPrioritySubjectLecturer = subjectsSemester3.find(subject => subject.code === 'SMB20102');
@@ -529,11 +529,11 @@
                             schedule1 += `<li>${subject.code} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule1 += '</ul>';
+                    schedule1 += '</ol>';
 
                     // Suggested subjects recommended by students
-                    schedule2 += '<h3>Suggested Subjects Recommended by Students</h3>';
-                    schedule2 += '<ul>';
+                    schedule2 += '<h3>Suggested Subjects Ranked by Students</h3>';
+                    schedule2 += '<ol>';
                     const addedSubjectsStudent = new Set();
 
                     const firstPrioritySubjectStudent = subjectsSemester3.find(subject => subject.code === 'SMB20102');
@@ -557,7 +557,7 @@
                             schedule2 += `<li>${subject.code} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule2 += '</ul>';
+                    schedule2 += '</ol>';
 
                     const newSchedule2 = document.getElementById('newSchedule2');
                     newSchedule2.innerHTML = schedule;
@@ -626,7 +626,7 @@
                     });
 
                     document.getElementById('logoutButton').addEventListener('click', function () {
-                        window.location.href = 'https://aimanjitra.github.io/firebase/main.html';
+                        window.location.href = 'https://aimanjitra.github.io/firebase/login2.html';
                     });
 
                     document.getElementById('nextSemester').addEventListener('click', function () {
@@ -640,7 +640,7 @@
                     });
 
                    document.getElementById('editResult').addEventListener('click', function () {
-                        const editPageUrl = `https://aimanjitra.github.io/firebase/select2.html?username=${username}&password=${password}`;
+                        const editPageUrl = `https://aimanjitra.github.io/firebase/select02.html?username=${username}&password=${password}`;
                         window.location.href = editPageUrl;
                     });
                 } else {
