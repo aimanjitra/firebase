@@ -503,6 +503,7 @@
 
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
 
+                    if (failSubjectsSemester1.length > 0) {
                     // Suggested subjects recommended by lecturers
                     schedule1 += '<h3>Suggested Subjects Ranked by Lecturer</h3>';
                     schedule1 += '<ol>';
@@ -558,6 +559,7 @@
                         }
                     }
                     schedule2 += '</ol>';
+                    }
 
                     const newSchedule2 = document.getElementById('newSchedule2');
                     newSchedule2.innerHTML = schedule;
