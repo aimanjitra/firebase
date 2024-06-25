@@ -239,18 +239,20 @@
             const schedule1 = sessionStorage.getItem('schedule1');
             const schedule2 = sessionStorage.getItem('schedule2');
 
-            if (storedSchedule && schedule1 && schedule2) {
-                const newSchedule2Container = document.getElementById('newSchedule2');
-                newSchedule2Container.innerHTML = storedSchedule;
+            if (storedSchedule) {
+            const newSchedule2Container = document.getElementById('newSchedule2');
+            newSchedule2Container.innerHTML = storedSchedule;
 
-                const schedule1Container = document.createElement('div');
-                schedule1Container.innerHTML = schedule1;
-                newSchedule2Container.appendChild(schedule1Container);
-
-                const schedule2Container = document.createElement('div');
-                schedule2Container.innerHTML = schedule2;
-                newSchedule2Container.appendChild(schedule2Container);
-            }
+                    if (schedule1 && schedule2) {
+                        const schedule1Container = document.createElement('div');
+                        schedule1Container.innerHTML = schedule1;
+                        newSchedule2Container.appendChild(schedule1Container);
+        
+                        const schedule2Container = document.createElement('div');
+                        schedule2Container.innerHTML = schedule2;
+                        newSchedule2Container.appendChild(schedule2Container);
+                    }
+                }
 
             // Populate the subject select options based on subjectsSemester3WithFailed
             subjectsSemester3WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester3WithFailed')) || [];
