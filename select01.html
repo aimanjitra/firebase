@@ -10,17 +10,17 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
+            overflow-y: auto; /* Enable vertical scrolling */
             background: #001b3d;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Align items at the top */
             font-family: Arial, sans-serif;
             color: white;
         }
 
-        .container-marks, .container-results {
+        .container-marks, .container-results, .container-schedule {
             display: flex;
             flex-direction: column;
             width: 600px;
@@ -71,6 +71,13 @@
     <h1>Semester 1</h1>
 </div>
 <body>
+    <!-- New Schedule for Semester 1 Container -->
+    <div class="container-schedule" id="newSchedule1">
+        <h3>New Schedule For Semester 1</h3>
+        <p>For this semester, you need to take the following subjects:</p>
+        <ul id="semester1SubjectsList"></ul>
+        <p>This is all the subjects that you need to take for this semester. You need to fulfill this subject count.</p>
+    </div>
     <div class="container-marks">
         <form id="marksForm">
             <div class="input-group">
