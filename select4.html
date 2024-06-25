@@ -244,21 +244,21 @@
             console.log('Stored schedule:', storedSchedule);
             console.log('Stored schedule1:', schedule1);
             console.log('Stored schedule2:', schedule2);
+            
+            if (storedSchedule) {
+            const newSchedule3Container = document.getElementById('newSchedule3');
+            newSchedule3Container.innerHTML = storedSchedule;
 
-            if (storedSchedule && schedule1 && schedule2) {
-                const newSchedule3Container = document.getElementById('newSchedule3');
-                newSchedule3Container.innerHTML = storedSchedule;
-
-                const schedule1Container = document.createElement('div');
-                schedule1Container.innerHTML = schedule1;
-                newSchedule3Container.appendChild(schedule1Container);
-
-                const schedule2Container = document.createElement('div');
-                schedule2Container.innerHTML = schedule2;
-                newSchedule3Container.appendChild(schedule2Container);
-
-                console.log('Schedule displayed successfully.');
-            } else {
+                    if (schedule1 && schedule2) {
+                        const schedule1Container = document.createElement('div');
+                        schedule1Container.innerHTML = schedule1;
+                        newSchedule3Container.appendChild(schedule1Container);
+        
+                        const schedule2Container = document.createElement('div');
+                        schedule2Container.innerHTML = schedule2;
+                        newSchedule3Container.appendChild(schedule2Container);
+                    }
+                } else {
                 console.log('No stored schedule found.');
             }
 
