@@ -484,6 +484,8 @@
 
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
 
+                    if (failSubjectsSemester2.length > 0 && subjectsNotTakenInSemester2.length > 0) {
+
                     // Prioritized subjects
                     const prioritizedSubjects = ['EKT104', 'SMQ27203', 'EKT119', 'EKT103', 'EKT124', 'NMJ21403', 'NMJ20703', 'EQT102', 'NMJ21803', 'NMJ21704'];
                     const prioritizedSubjectsLecturer = ['EKT124', 'EKT103', 'EKT119', 'EKT104', 'EQT102', 'NMJ21403', 'NMJ21803', 'NMJ21403', 'NMJ20703', 'NMJ21704'];
@@ -529,6 +531,7 @@
                         }
                     }
                     schedule2 += '</ol>';
+                    }
 
                     const newSchedule3 = document.getElementById('newSchedule3');
                     newSchedule3.innerHTML = schedule;
