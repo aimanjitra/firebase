@@ -84,7 +84,7 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
+            apiKey: "AIzaSyDyXr6XMGjgv8XG1U0Owly-PWvAQE7wZY4",
             authDomain: "academic-student-a62c6.firebaseapp.com",
             databaseURL: "https://academic-student-a62c6-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "academic-student-a62c6",
@@ -117,8 +117,8 @@
                             sessionStorage.setItem('username', username);
                             sessionStorage.setItem('password', password);
 
-                            // Redirect to marks page
-                            window.location.href = 'https://aimanjitra.github.io/firebase/select1.html?username=user1&password=v';
+                            // Check the number of subjects with grades
+                            checkGradesAndRedirect(userId);
                         }
                     });
                     if (!authenticated) {
@@ -129,6 +129,33 @@
                 }
             }).catch((error) => {
                 console.error('Error reading user data:', error);
+            });
+        }
+
+        // Function to check grades and redirect based on the number of subjects with grades
+        function checkGradesAndRedirect(userId) {
+            const dbRef = ref(database, 'users/' + userId + '/subjects');
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let subjectCount = 0;
+                    snapshot.forEach((subjectSnapshot) => {
+                        const subjectData = subjectSnapshot.val();
+                        if (subjectData.grade) {
+                            subjectCount++;
+                        }
+                    });
+
+                    // Redirect based on the number of subjects with grades
+                    if (subjectCount > 14) {
+                        window.location.href = 'https://aimanjitra.github.io/firebase/result1.html?username=user1&password=v';
+                    } else {
+                        window.location.href = 'https://aimanjitra.github.io/firebase/select1.html?username=user1&password=v';
+                    }
+                } else {
+                    window.location.href = 'https://aimanjitra.github.io/firebase/select1.html?username=user1&password=v';
+                }
+            }).catch((error) => {
+                console.error('Error reading subjects data:', error);
             });
         }
 
