@@ -502,9 +502,10 @@
 
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
 
+                    if (failSubjectsSemester1.length > 0) {
                     // Suggested subjects recommended by lecturers
                     schedule1 += '<h3>Suggested Subjects Ranked by Lecturer</h3>';
-                    schedule1 += '<ul>';
+                    schedule1 += '<ol>';
                     const addedSubjectsLecturer = new Set();
 
                     const firstPrioritySubjectLecturer = subjectsSemester3.find(subject => subject.code === 'SMB20102');
@@ -528,11 +529,11 @@
                             schedule1 += `<li>${subject.code} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule1 += '</ul>';
+                    schedule1 += '</ol>';
 
                     // Suggested subjects recommended by students
                     schedule2 += '<h3>Suggested Subjects Ranked by Students</h3>';
-                    schedule2 += '<ul>';
+                    schedule2 += '<ol>';
                     const addedSubjectsStudent = new Set();
 
                     const firstPrioritySubjectStudent = subjectsSemester3.find(subject => subject.code === 'SMB20102');
@@ -556,7 +557,8 @@
                             schedule2 += `<li>${subject.code} - ${subject.name} [${subject.creditHour} Kredit]</li>`;
                         }
                     }
-                    schedule2 += '</ul>';
+                    schedule2 += '</ol>';
+                    }
 
                     const newSchedule2 = document.getElementById('newSchedule2');
                     newSchedule2.innerHTML = schedule;
