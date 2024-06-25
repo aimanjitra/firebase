@@ -73,6 +73,14 @@
 <body>
     <div class="container-marks">
         <form id="marksForm">
+            <!-- New Schedule for Semester 1 Container -->
+    <div class="container-schedule" id="newSchedule1">
+        <h3>New Schedule For Semester 1</h3>
+        <p>For this semester, you need to take the following subjects:</p>
+        <ul id="semester1SubjectsList"></ul>
+        <p>This is all the subjects that you need to take for this semester. You need to fulfill this subject count.</p>
+    </div>
+            
             <div class="input-group">
                 <label for="subjectCode">Select Subject:</label>
                 <select id="subjectCode" required>
@@ -111,14 +119,6 @@
         <div id="nextPageButton" style="display: none;">
             <button onclick="window.location.href='https://aimanjitra.github.io/firebase/sem1.html?username=user1&password=v'">Result</button>
         </div>
-    </div>
-
-    <!-- New Schedule for Semester 1 Container -->
-    <div class="container-schedule" id="newSchedule1">
-        <h3>New Schedule For Semester 1</h3>
-        <p>For this semester, you need to take the following subjects:</p>
-        <ul id="semester1SubjectsList"></ul>
-        <p>This is all the subjects that you need to take for this semester. You need to fulfill this subject count.</p>
     </div>
 
     <script type="module">
