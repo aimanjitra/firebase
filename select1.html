@@ -20,7 +20,7 @@
             color: white;
         }
 
-        .container-marks, .container-results {
+        .container-marks, .container-results, .container-schedule {
             display: flex;
             flex-direction: column;
             width: 600px;
@@ -58,15 +58,13 @@
             color: skyblue;
         }
 
-        
-           @media (max-width: 700px) {
-        .container-marks, .container-results {
-            width: 85%;
-            padding: 15px;
-            margin: 0 auto;
+        @media (max-width: 700px) {
+            .container-marks, .container-results, .container-schedule {
+                width: 85%;
+                padding: 15px;
+                margin: 0 auto;
+            }
         }
-           }
-        
     </style>
 </head>
 <div class="header">
@@ -115,6 +113,14 @@
         </div>
     </div>
 
+    <!-- New Schedule for Semester 1 Container -->
+    <div class="container-schedule" id="newSchedule1">
+        <h3>New Schedule For Semester 1</h3>
+        <p>For this semester, you need to take the following subjects:</p>
+        <ul id="semester1SubjectsList"></ul>
+        <p>This is all the subjects that you need to take for this semester. You need to fulfill this subject count.</p>
+    </div>
+
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -147,6 +153,29 @@
             "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
             "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
         };
+
+        // Subjects for Semester 1 with credit hours
+        const semester1Subjects = [
+            { code: "uzw164", name: "KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I", credit: 1 },
+            { code: "uuw130", name: "FALSAFAH DAN ISU SEMASA", credit: 2 },
+            { code: "ekt102", name: "ASAS KEJURUTERAAN ELEKTRONIK", credit: 3 },
+            { code: "eqt101", name: "MATEMATIK KEJURUTERAAN I", credit: 3 },
+            { code: "ekt120", name: "PENGATURCARAAN KOMPUTER", credit: 4 },
+            { code: "ekt101", name: "TEORI LITAR ELEKTRIK", credit: 4 }
+        ];
+
+        // Populate New Schedule for Semester 1
+        function populateSemester1Schedule() {
+            const semester1SubjectsList = document.getElementById('semester1SubjectsList');
+            semester1Subjects.forEach(subject => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${subject.code.toUpperCase()} - ${subject.name} [${subject.credit} Kredit]`;
+                semester1SubjectsList.appendChild(listItem);
+            });
+        }
+
+        // Call the function to populate Semester 1 schedule
+        populateSemester1Schedule();
 
         // Function to add or update subject grade in Realtime Database
         function addSubjectGrade(subjectCode, grade) {
@@ -238,7 +267,7 @@
             e.preventDefault();
             const subjectCode = document.getElementById('subjectCode').value;
             const grade = document.getElementById('subjectGrade').value;
-            
+
             const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
             const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectFullName}?`);
             if (confirmation) {
