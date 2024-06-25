@@ -531,7 +531,8 @@
                 </ul>
                 <p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>
             `;
-
+            
+            if (failSubjectsSemester1.length > 0) {
             // Display suggested subjects recommended by lecturer
             schedule += `
                 <h3>Suggested Subjects Ranked by Lecturer</h3>
@@ -630,6 +631,7 @@
 
             // Close the unordered list tag for students
             schedule += '</ol>';
+            }
 
             // Update the HTML content
             const newSchedule1 = document.getElementById('newSchedule1');
