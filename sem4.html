@@ -262,6 +262,21 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // Subject mapping
+        const subjectMapping = {
+        "uzw195": "UZW195 - RADIO KAMPUS [CAMPUS RADIO]",
+        "ekt124": "EKT124 - ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]",
+        "ekt103": "EKT103 - KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]",
+        "ekt119": "EKT119 - LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]",
+        "eqt102": "EQT102 - MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]",
+        "ekt104": "EKT104 - LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]",
+        "nmj20703": "NMJ20703 - ISYARAT DAN SISTEM [SIGNAL AND SYSTEMS]",
+        "smq27203": "SMQ27203 - KEBARANGKALIAN DAN STATISTIK [PROBABILITY AND STATISTICS]",
+        "nmj21403": "NMJ21403 - PENGATURCARAAN BERASASKAN OBJEK [OBJECT ORIENTED PROGRAMMING]",
+        "nmj21803": "NMJ21803 - TEORI ELEKTROMAGNET [ELECTROMAGNETIC THEORY]",
+        "nmj21704": "NMJ21704 - SISTEM MIKROPEMPROSES [MICROPROCESSOR SYSTEM]"
+    };
+
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get('username');
         const password = urlParams.get('password');
@@ -328,6 +343,12 @@
 
         document.addEventListener('DOMContentLoaded', async function () {
             const failSubjectsSemester4List = [];
+
+            // Retrieve selected subjects from sessionStorage
+            const selectedSubjects = JSON.parse(sessionStorage.getItem('SelectedSubjectSem4')) || [];
+            const selectedSubjectCodes = selectedSubjects.map(subjectFullName => {
+        return Object.keys(subjectMapping).find(key => subjectMapping[key].includes(subjectFullName));
+        });
             const userData = await getUserData(username, password);
             if (userData) {
 
@@ -345,12 +366,15 @@
 
                 const subjectsSemester4WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester4WithFailed')) || [];
 
-                subjectsSemester4WithFailed.forEach((subject, index) => {
-                    const userSubjectData = userData.subjects[subject.code.toLowerCase()];
-                    if (userSubjectData && userSubjectData.grade) {
-                        const grade = userSubjectData.grade;
-                        const result = determineResult(grade);
-                        const gpaPoints = getGpaPoints(grade);
+                // Filter and display only the selected subjects
+        selectedSubjectCodes.forEach(subjectCode => {
+            const subject = subjectsSemester4WithFailed.find(sub => sub.code.toLowerCase() === subjectCode.toLowerCase());
+            if (subject) {
+                const userSubjectData = userData.subjects[subject.code.toLowerCase()];
+                if (userSubjectData && userSubjectData.grade) {
+                    const grade = userSubjectData.grade;
+                    const result = determineResult(grade);
+                    const gpaPoints = getGpaPoints(grade);
 
                         tableRows += `
                             <tr>
@@ -369,6 +393,7 @@
                             failSubjectsSemester4List.push(subject);
                         }
                     }
+                }
                 });
 
                 const CGPA4 = totalGpaPoints / totalCreditHours;
@@ -590,7 +615,7 @@
                     });
 
                     document.getElementById('previousResult').addEventListener('click', function () {
-                        const previousPageUrl = `https://aimanjitra.github.io/firebase/select4?username=${username}&password=${password}`;
+                        const previousPageUrl = `https://aimanjitra.github.io/googlesheet/select4.html?username=${username}&password=${password}`;
                         window.location.href = previousPageUrl;
                     });
 
