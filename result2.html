@@ -641,6 +641,10 @@
                     });
 
                     document.getElementById('nextSemester').addEventListener('click', function () {
+                        // Retrieve selected subjects from sessionStorage
+                        const selectedSubjects = JSON.parse(sessionStorage.getItem('SelectedSubjectSem3') || '[]');
+
+                        console.log('Selected Subjects:', selectedSubjects); // Debug log
                         const nextPageUrl = `https://aimanjitra.github.io/firebase/result3.html?username=${username}&password=${password}&selectedSubjects=${selectedSubjectsQuery}`;
                         window.location.href = nextPageUrl;
                     });
