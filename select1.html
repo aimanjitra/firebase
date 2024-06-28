@@ -116,7 +116,7 @@
         <h3>Semester 1</h3>
         <ul id="resultsList"></ul>
         <div id="nextPageButton" style="display: none;">
-            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/sem1.html?username=user1&password=v'">Result</button>
+            <button id="resultButton">Result</button>
         </div>
     </div>
 
@@ -244,8 +244,13 @@
 
                 // Check if all semester 1 subjects are submitted
                 const allSubmitted = semester1Subjects.every(subject => submittedSubjects.has(subject));
+                const username = sessionStorage.getItem('username');
+                const password = sessionStorage.getItem('password');
 
                 if (allSubmitted) {
+                    const resultButton = document.getElementById('resultButton');
+                    const nextPageUrl = `https://aimanjitra.github.io/firebase/sem1.html?username=${username}&password=${password}`;
+                    resultButton.setAttribute('onclick', `window.location.href='${nextPageUrl}'`);
                     document.getElementById('nextPageButton').style.display = 'block';
                 } else {
                     document.getElementById('nextPageButton').style.display = 'none';
@@ -255,11 +260,58 @@
             });
         }
 
-        // Retrieve stored userId from sessionStorage
-        const userId = sessionStorage.getItem('userId');
-        if (userId) {
-            loadSubmittedData(userId);
+        // Retrieve query parameters
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                username: params.get('username'),
+                password: params.get('password')
+            };
         }
+
+        // Function to verify user based on query parameters
+        function verifyUser(username, password) {
+            const dbRef = ref(database);
+            get(child(dbRef, 'users')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let authenticated = false;
+                    let userId = null;
+                    snapshot.forEach((userSnapshot) => {
+                        const userData = userSnapshot.val();
+                        if (userData.username === username && userData.password === password) {
+                            authenticated = true;
+                            userId = userSnapshot.key;
+
+                            // Store the userId in session storage
+                            sessionStorage.setItem('userId', userId);
+                            sessionStorage.setItem('username', username);
+                            sessionStorage.setItem('password', password);
+                            loadSubmittedData(userId); // Load data after authentication
+                        }
+                    });
+                    if (!authenticated) {
+                        alert('Invalid username or password.');
+                    }
+                } else {
+                    console.log("No data available");
+                }
+            }).catch((error) => {
+                console.error('Error reading user data:', error);
+            });
+        }
+
+        // Main function to execute on page load
+        function main() {
+            const { username, password } = getQueryParams();
+            if (username && password) {
+                verifyUser(username, password);
+            } else {
+                console.error('Username and password query parameters are missing.');
+            }
+        }
+
+        // Call the main function on page load
+        main();
 
         // Event listener for marks form submission
         document.getElementById('marksForm').addEventListener('submit', (e) => {
