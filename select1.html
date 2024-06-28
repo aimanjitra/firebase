@@ -10,17 +10,17 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow-y: auto; /* Enable vertical scrolling */
+            overflow: hidden;
             background: #001b3d;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Align items at the top */
+            justify-content: center;
             font-family: Arial, sans-serif;
             color: white;
         }
 
-        .container-marks, .container-results, .container-schedule {
+        .container-marks, .container-results {
             display: flex;
             flex-direction: column;
             width: 600px;
@@ -58,26 +58,21 @@
             color: skyblue;
         }
 
-        @media (max-width: 700px) {
-            .container-marks, .container-results, .container-schedule {
-                width: 85%;
-                padding: 15px;
-                margin: 0 auto;
-            }
+        
+           @media (max-width: 700px) {
+        .container-marks, .container-results {
+            width: 85%;
+            padding: 15px;
+            margin: 0 auto;
         }
+           }
+        
     </style>
 </head>
 <div class="header">
     <h1>Semester 1</h1>
 </div>
 <body>
-    <!-- New Schedule for Semester 1 Container -->
-    <div class="container-schedule" id="newSchedule1">
-        <h3>New Schedule For Semester 1</h3>
-        <p>For this semester, you need to take the following subjects:</p>
-        <ul id="semester1SubjectsList"></ul>
-        <p>This is all the subjects that you need to take for this semester. You need to fulfill this subject count.</p>
-    </div>
     <div class="container-marks">
         <form id="marksForm">
             <div class="input-group">
@@ -116,7 +111,7 @@
         <h3>Semester 1</h3>
         <ul id="resultsList"></ul>
         <div id="nextPageButton" style="display: none;">
-            <button id="resultButton">Result</button>
+            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/sem1.html?username=user1&password=v'">Result</button>
         </div>
     </div>
 
@@ -152,29 +147,6 @@
             "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
             "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
         };
-
-        // Subjects for Semester 1 with credit hours
-        const semester1Subjects = [
-            { code: "uzw164", name: "KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I", credit: 1 },
-            { code: "uuw130", name: "FALSAFAH DAN ISU SEMASA", credit: 2 },
-            { code: "ekt102", name: "ASAS KEJURUTERAAN ELEKTRONIK", credit: 3 },
-            { code: "eqt101", name: "MATEMATIK KEJURUTERAAN I", credit: 3 },
-            { code: "ekt120", name: "PENGATURCARAAN KOMPUTER", credit: 4 },
-            { code: "ekt101", name: "TEORI LITAR ELEKTRIK", credit: 4 }
-        ];
-
-        // Populate New Schedule for Semester 1
-        function populateSemester1Schedule() {
-            const semester1SubjectsList = document.getElementById('semester1SubjectsList');
-            semester1Subjects.forEach(subject => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${subject.code.toUpperCase()} - ${subject.name} [${subject.credit} Kredit]`;
-                semester1SubjectsList.appendChild(listItem);
-            });
-        }
-
-        // Call the function to populate Semester 1 schedule
-        populateSemester1Schedule();
 
         // Function to add or update subject grade in Realtime Database
         function addSubjectGrade(subjectCode, grade) {
@@ -244,13 +216,8 @@
 
                 // Check if all semester 1 subjects are submitted
                 const allSubmitted = semester1Subjects.every(subject => submittedSubjects.has(subject));
-                const username = sessionStorage.getItem('username');
-                const password = sessionStorage.getItem('password');
 
                 if (allSubmitted) {
-                    const resultButton = document.getElementById('resultButton');
-                    const nextPageUrl = `https://aimanjitra.github.io/firebase/sem1.html?username=${username}&password=${password}`;
-                    resultButton.setAttribute('onclick', `window.location.href='${nextPageUrl}'`);
                     document.getElementById('nextPageButton').style.display = 'block';
                 } else {
                     document.getElementById('nextPageButton').style.display = 'none';
@@ -260,65 +227,18 @@
             });
         }
 
-        // Retrieve query parameters
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                username: params.get('username'),
-                password: params.get('password')
-            };
+        // Retrieve stored userId from sessionStorage
+        const userId = sessionStorage.getItem('userId');
+        if (userId) {
+            loadSubmittedData(userId);
         }
-
-        // Function to verify user based on query parameters
-        function verifyUser(username, password) {
-            const dbRef = ref(database);
-            get(child(dbRef, 'users')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    let authenticated = false;
-                    let userId = null;
-                    snapshot.forEach((userSnapshot) => {
-                        const userData = userSnapshot.val();
-                        if (userData.username === username && userData.password === password) {
-                            authenticated = true;
-                            userId = userSnapshot.key;
-
-                            // Store the userId in session storage
-                            sessionStorage.setItem('userId', userId);
-                            sessionStorage.setItem('username', username);
-                            sessionStorage.setItem('password', password);
-                            loadSubmittedData(userId); // Load data after authentication
-                        }
-                    });
-                    if (!authenticated) {
-                        alert('Invalid username or password.');
-                    }
-                } else {
-                    console.log("No data available");
-                }
-            }).catch((error) => {
-                console.error('Error reading user data:', error);
-            });
-        }
-
-        // Main function to execute on page load
-        function main() {
-            const { username, password } = getQueryParams();
-            if (username && password) {
-                verifyUser(username, password);
-            } else {
-                console.error('Username and password query parameters are missing.');
-            }
-        }
-
-        // Call the main function on page load
-        main();
 
         // Event listener for marks form submission
         document.getElementById('marksForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const subjectCode = document.getElementById('subjectCode').value;
             const grade = document.getElementById('subjectGrade').value;
-
+            
             const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
             const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectFullName}?`);
             if (confirmation) {
