@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -160,8 +159,8 @@
         <h3>Semester 2</h3>
         <ul id="resultsList"></ul>
         <div id="nextPageButton">
-            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/result2.html?username=user1&password=v'">Result</button>
-        </div>
+            <button onclick="redirectToResultPage()">Result</button>
+        </div>        
     </div>
 
     <!-- Include Firebase SDK -->
@@ -213,38 +212,25 @@
         const username = urlParams.get('username');
         const password = urlParams.get('password');
 
-        // Function to verify username and password
-        async function verifyUser(username, password) {
+        // Function to retrieve user data from Firebase
+        async function getUserData(username, password) {
             const dbRef = ref(database);
             const snapshot = await get(child(dbRef, `users/${username}`));
+            console.log(`Attempting to retrieve user data for: ${username}`);
             if (snapshot.exists()) {
                 const userData = snapshot.val();
                 if (userData.password === password) {
-                    // Store user ID in sessionStorage
-                    sessionStorage.setItem('userId', username);
+                    console.log("User data retrieved:", userData);
                     return userData;
                 } else {
                     console.log("Invalid password");
-                    alert("Invalid username or password.");
-                    window.location.href = 'loginPage.html';
                     return null;
                 }
             } else {
-                console.log("No data available");
-                alert("Invalid username or password.");
-                window.location.href = 'loginPage.html';
+                console.log("No data available for user:", username);
                 return null;
             }
         }
-
-        // Load user data and initialize the page
-        document.addEventListener('DOMContentLoaded', async function() {
-            const userData = await verifyUser(username, password);
-            if (userData) {
-                document.querySelector('.container-marks').style.display = 'block';
-                loadSubmittedData(userData);
-            }
-        });
 
         const storedSchedule = sessionStorage.getItem('newSchedule1');
         if (storedSchedule) {
@@ -270,13 +256,7 @@
         }
 
         // Function to load submitted data and display it
-        function loadSubmittedData(userData) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-
+        function loadSubmittedData(userId) {
             const dbRef = ref(database, 'users/' + userId + '/subjects');
             get(dbRef).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -312,40 +292,33 @@
         }
 
         // Function to delete only the grade of a subject
-            async function deleteSubject(subjectCode) {
-                const userId = sessionStorage.getItem('userId');
-                if (!userId) {
-                    console.error('No user signed in');
-                    return;
-                }
+        async function deleteSubject(subjectCode) {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                console.error('No user signed in');
+                return;
+            }
 
-                
-            // Ask for confirmation before deleting the subject
             const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
             const confirmation = confirm(`Are you sure you want to delete the grade for the subject ${subjectFullName}?`);
             if (!confirmation) {
                 return; // Exit the function if the user cancels
             }
 
-
-                const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
-
-                // Check if the subject exists in the database
-                const snapshot = await get(dbRef);
-                if (snapshot.exists()) {
-                    // If the subject exists, set the grade to null
-                    const gradeRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode + '/grade');
-                    set(gradeRef, null).then(() => {
-                        console.log('Grade removed successfully.');
-                        loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-                    }).catch((error) => {
-                        console.error('Error removing grade:', error);
-                    });
-                } else {
-                    console.error('Subject does not exist in the database.');
-                }
+            const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
+            const snapshot = await get(dbRef);
+            if (snapshot.exists()) {
+                const gradeRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode + '/grade');
+                set(gradeRef, null).then(() => {
+                    console.log('Grade removed successfully.');
+                    loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+                }).catch((error) => {
+                    console.error('Error removing grade:', error);
+                });
+            } else {
+                console.error('Subject does not exist in the database.');
             }
-
+        }
 
         // Function to check if all subjects are submitted
         function checkAllSubjectsSubmitted() {
@@ -399,9 +372,73 @@
             }
         });
 
+        // Function to redirect to the result page with username and password
+        function redirectToResultPage() {
+            const username = sessionStorage.getItem('username');
+            const password = sessionStorage.getItem('password');
+            if (username && password) {
+                window.location.href = `https://aimanjitra.github.io/firebase/result2?username=${username}&password=${password}`;
+            } else {
+                console.error('Username and/or password missing from session storage.');
+            }
+        }
+
+        // Retrieve query parameters
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                username: params.get('username'),
+                password: params.get('password')
+            };
+        }
+
+        // Function to verify user based on query parameters
+        function verifyUser(username, password) {
+            const dbRef = ref(database);
+            get(child(dbRef, 'users')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let authenticated = false;
+                    let userId = null;
+                    snapshot.forEach((userSnapshot) => {
+                        const userData = userSnapshot.val();
+                        if (userData.username === username && userData.password === password) {
+                            authenticated = true;
+                            userId = userSnapshot.key;
+
+                            // Store the userId in session storage
+                            sessionStorage.setItem('userId', userId);
+                            sessionStorage.setItem('username', username);
+                            sessionStorage.setItem('password', password);
+                            loadSubmittedData(userId); // Load data after authentication
+                        }
+                    });
+                    if (!authenticated) {
+                        alert('Invalid username or password.');
+                    }
+                } else {
+                    console.log("No data available");
+                }
+            }).catch((error) => {
+                console.error('Error reading user data:', error);
+            });
+        }
+
+        // Main function to execute on page load
+        function main() {
+            const { username, password } = getQueryParams();
+            if (username && password) {
+                verifyUser(username, password);
+            } else {
+                console.error('Username and password query parameters are missing.');
+            }
+        }
+
+        // Call the main function on page load
+        main();
+
         // Expose deleteSubject function to global scope
         window.deleteSubject = deleteSubject;
+        window.redirectToResultPage = redirectToResultPage;
     </script>
 </body>
-
 </html>
