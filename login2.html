@@ -54,10 +54,10 @@
         }
 
         @media (max-width: 700px) {
-        .container-login {
-        width: 85%;
-        padding: 15px;
-        }
+            .container-login {
+                width: 85%;
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -80,11 +80,11 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, get, set, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
+            apiKey: "AIzaSyDyXr6XMGjgv8XG1U0Owly-PWvAQE7wZY4",
             authDomain: "academic-student-a62c6.firebaseapp.com",
             databaseURL: "https://academic-student-a62c6-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "academic-student-a62c6",
@@ -98,6 +98,35 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
+
+        // Predefined list of subjects
+        const subjectsList = [
+            { code: 'uzw195' },
+            { code: 'ekt124' },
+            { code: 'ekt103' },
+            { code: 'ekt119' },
+            { code: 'eqt102' },
+            { code: 'ekt104' }
+        ];
+
+        // Function to initialize subjects for a user
+        function initializeSubjects(userId) {
+            const dbRef = ref(database, 'users/' + userId + '/subjects');
+            get(dbRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    subjectsList.forEach((subject) => {
+                        set(child(dbRef, subject.code.toLowerCase()), {
+                            grade: null
+                        });
+                    });
+                    console.log('Subjects initialized.');
+                } else {
+                    console.log('Subjects already exist.');
+                }
+            }).catch((error) => {
+                console.error('Error initializing subjects:', error);
+            });
+        }
 
         // Function to verify username and password
         function verifyUser(username, password) {
@@ -117,8 +146,11 @@
                             sessionStorage.setItem('username', username);
                             sessionStorage.setItem('password', password);
 
-                            // Redirect to marks page
-                            window.location.href = 'https://aimanjitra.github.io/firebase/result1.html?username=user1&password=v';
+                            // Initialize subjects for the user
+                            initializeSubjects(userId);
+
+                            // Check the number of subjects with grades
+                            checkGradesAndRedirect(userId);
                         }
                     });
                     if (!authenticated) {
@@ -129,6 +161,35 @@
                 }
             }).catch((error) => {
                 console.error('Error reading user data:', error);
+            });
+        }
+
+        function checkGradesAndRedirect(userId) {
+            const dbRef = ref(database, 'users/' + userId + '/subjects');
+            const username = sessionStorage.getItem('username');
+            const password = sessionStorage.getItem('password');
+
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let subjectCount = 0;
+                    snapshot.forEach((subjectSnapshot) => {
+                        const subjectData = subjectSnapshot.val();
+                        if (subjectData.grade) {
+                            subjectCount++;
+                        }
+                    });
+
+                    // Redirect based on the number of subjects with grades
+                    if (subjectCount > 14) {
+                        window.location.href = `https://aimanjitra.github.io/firebase/result1.html?username=${username}&password=${password}`;
+                    } else {
+                        window.location.href = `https://aimanjitra.github.io/firebase/select1.html?username=${username}&password=${password}`;
+                    }
+                } else {
+                    window.location.href = `https://aimanjitra.github.io/firebase/select1.html?username=${username}&password=${password}`;
+                }
+            }).catch((error) => {
+                console.error('Error reading subjects data:', error);
             });
         }
 
