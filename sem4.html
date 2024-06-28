@@ -268,13 +268,20 @@
 
         async function getUserData(username, password) {
             const dbRef = ref(database);
-            const snapshot = await get(child(dbRef, `users/${username}`));
+            const snapshot = await get(child(dbRef, 'users'));
             if (snapshot.exists()) {
-                const userData = snapshot.val();
-                if (userData.password === password) {
+                let userData = null;
+                snapshot.forEach((userSnapshot) => {
+                    const data = userSnapshot.val();
+                    if (data.password === password) {
+                        userData = data;
+                        return true; // Break the loop
+                    }
+                });
+                if (userData) {
                     return userData;
                 } else {
-                    console.log("Invalid password");
+                    console.log("Invalid username or password");
                     return null;
                 }
             } else {
@@ -583,7 +590,7 @@
                     });
 
                     document.getElementById('previousResult').addEventListener('click', function () {
-                        const previousPageUrl = `https://aimanjitra.github.io/firebase/select4.html?username=${username}&password=${password}`;
+                        const previousPageUrl = `https://aimanjitra.github.io/firebase/select4?username=${username}&password=${password}`;
                         window.location.href = previousPageUrl;
                     });
 
