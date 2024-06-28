@@ -274,6 +274,21 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        const subjectMapping = {
+    "smb20102": "SMB20102 - BAHASA INGGERIS UNTUK KOMUNIKASI UMUM [ENGLISH FOR GENERAL COMMUNICATION] 2",
+    "nmj20003": "NMJ20003 - ALGORITHMA DAN STRUKTUR-STRUKTUR DATA [ALGORITHM AND DATA STRUCTURES]",
+    "smq22103": "SMQ22103 - MATEMATIK DISKRIT & LINEAR ALGEBRA [DISCRETE MATHEMATICS & LINEAR ALGEBRA]",
+    "nmj20404": "NMJ20404 - ELEKTRONIK DIGIT II [DIGITAL ELECTRONICS II]",
+    "nmj20904": "NMJ20904 - LITAR ELEKTRONIK ANALOG II [ANALOG ELECTRONIC CIRCUIT II]",
+    "uzw164": "UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I",
+    "uuw130": "UUW130 - FALSAFAH DAN ISU SEMASA",
+    "ekt102": "EKT102 - ASAS KEJURUTERAAN ELEKTRONIK",
+    "eqt101": "EQT101 - MATEMATIK KEJURUTERAAN I",
+    "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
+    "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
+};
+
+
         // Retrieve URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get('username');
@@ -344,8 +359,11 @@
 
         document.addEventListener('DOMContentLoaded', async function () {
             const failSubjectsSemester3 = [];
-            const selectedSubjectsQuery = urlParams.get('selectedSubjects');
-            const selectedSubjectCodes = selectedSubjectsQuery ? selectedSubjectsQuery.split(',') : [];
+            // Retrieve selected subjects from sessionStorage
+            const selectedSubjects = JSON.parse(sessionStorage.getItem('SelectedSubjectSem3')) || [];
+            const selectedSubjectCodes = selectedSubjects.map(subjectFullName => {
+        return Object.keys(subjectMapping).find(key => subjectMapping[key].includes(subjectFullName));
+        });
 
             const userData = await getUserData(username, password);
             if (userData) {
