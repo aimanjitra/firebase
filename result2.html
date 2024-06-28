@@ -209,8 +209,8 @@
             <h2 id="matric">No Matric: [No Matric]</h2>
             <h2 id="course">Course: [Course]</h2>
             <h2 id="codeCourse">Code Course: [Code Course]</h2>
-            <h2 id="year">Year: [Year]</h2>
-            <h2 id="semester">Semester: [Semester]</h2>
+            <h2 id="year">Current Year: [Year]</h2>
+            <h2 id="semester">Current Semester: [Semester]</h2>
         </div>
         
         <div class="semester-selector-container">
@@ -296,13 +296,20 @@
         // Function to retrieve user data from Firebase
         async function getUserData(username, password) {
             const dbRef = ref(database);
-            const snapshot = await get(child(dbRef, `users/${username}`));
+            const snapshot = await get(child(dbRef, 'users'));
             if (snapshot.exists()) {
-                const userData = snapshot.val();
-                if (userData.password === password) {
+                let userData = null;
+                snapshot.forEach((userSnapshot) => {
+                    const data = userSnapshot.val();
+                    if (data.password === password) {
+                        userData = data;
+                        return true; // Break the loop
+                    }
+                });
+                if (userData) {
                     return userData;
                 } else {
-                    console.log("Invalid password");
+                    console.log("Invalid username or password");
                     return null;
                 }
             } else {
@@ -351,9 +358,11 @@
 
         document.addEventListener('DOMContentLoaded', async function () {
             const failSubjectsSemester2 = [];
+            console.log('Query Parameters:', { username, password }); // Log query parameters
             const userData = await getUserData(username, password);
+            console.log('User data:', userData); // Log user data
             if (userData) {
-                
+
                 // Update biodata fields
                 document.getElementById('fullName').textContent = `Name: ${userData.fullname}`;
                 document.getElementById('matric').textContent = `No Matric: ${userData.matrik}`;
