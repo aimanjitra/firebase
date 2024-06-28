@@ -489,11 +489,6 @@ document.getElementById('resultButton').addEventListener('click', () => {
         console.log(`Unselected Subject ${index + 1}:`, subject);
     });
 
-    const selectedSubjectCodes = selectedSubjects.map(subjectFullName => {
-        const subjectCode = Object.keys(subjectMapping).find(key => subjectMapping[key].includes(subjectFullName));
-        return subjectCode;
-    });
-
     const userId = sessionStorage.getItem('userId');
 
     // Update Firebase with pending grades
@@ -506,9 +501,7 @@ document.getElementById('resultButton').addEventListener('click', () => {
         });
     }
 
-    // Redirect to the next page with selected subjects as query parameters
-    const selectedSubjectsQuery = selectedSubjectCodes.join(',');
-    window.location.href = `https://aimanjitra.github.io/firebase/sem3.html?username=${username}&password=${password}&selectedSubjects=${selectedSubjectsQuery}`;
+    window.location.href = `https://aimanjitra.github.io/googlesheet/sem3.html?username=${username}&password=${password}`;
 });
 
 // Expose deleteSubject function to global scope
