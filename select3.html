@@ -475,6 +475,9 @@ document.getElementById('resultButton').addEventListener('click', () => {
     const selectedSubjects = Array.from(document.querySelectorAll('#resultsList .subject-item'))
         .map(item => item.textContent.split(':')[0].trim());
 
+    // Store selected subjects in sessionStorage
+    sessionStorage.setItem('SelectedSubjectSem3', JSON.stringify(selectedSubjects));
+    
     const unselectedSubjects = subjectsSemester3WithFailed.filter(subject => !selectedSubjects.includes(`${subject.code.toUpperCase()} - ${subject.name}`));
     sessionStorage.setItem('UnusedSubjectsSemester3', JSON.stringify(unselectedSubjects));
 
