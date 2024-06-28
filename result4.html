@@ -268,20 +268,13 @@
 
         async function getUserData(username, password) {
             const dbRef = ref(database);
-            const snapshot = await get(child(dbRef, 'users'));
+            const snapshot = await get(child(dbRef, `users/${username}`));
             if (snapshot.exists()) {
-                let userData = null;
-                snapshot.forEach((userSnapshot) => {
-                    const data = userSnapshot.val();
-                    if (data.password === password) {
-                        userData = data;
-                        return true; // Break the loop
-                    }
-                });
-                if (userData) {
+                const userData = snapshot.val();
+                if (userData.password === password) {
                     return userData;
                 } else {
-                    console.log("Invalid username or password");
+                    console.log("Invalid password");
                     return null;
                 }
             } else {
