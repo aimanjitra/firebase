@@ -410,10 +410,10 @@
 
     if (username && password) {
         const selectedSubjects = Array.from(document.querySelectorAll('#resultsList .subject-item')).map(item => item.textContent.split(':')[0].trim());
+        // Store selected subjects in sessionStorage
+        sessionStorage.setItem('SelectedSubjectSem4', JSON.stringify(selectedSubjects));
         const unselectedSubjects = subjectsSemester4WithFailed.filter(subject => !selectedSubjects.includes(`${subject.code.toUpperCase()} - ${subject.name}`));
         sessionStorage.setItem('UnusedSubjectsSemester4', JSON.stringify(unselectedSubjects));
-        const selectedSubjectCodes = selectedSubjects.map(subjectFullName => Object.keys(subjectMapping).find(key => subjectMapping[key].includes(subjectFullName)));
-        const selectedSubjectsQuery = selectedSubjectCodes.join(',');
 
         for (const [subjectCode, grade] of Object.entries(pendingGrades)) {
             const dbRef = ref(database, `users/${userId}/subjects/${subjectCode}`);
@@ -424,7 +424,7 @@
             });
         }
 
-        window.location.href = `https://aimanjitra.github.io/firebase/sem4.html?username=${username}&password=${password}&selectedSubjects=${selectedSubjectsQuery}`;
+        window.location.href = `https://aimanjitra.github.io/googlesheet/sem4.html?username=${username}&password=${password}`;
     } else {
         console.error('Username and/or password missing from session storage.');
     }
