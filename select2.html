@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semester 2 - UniMAP</title>
+    <title>Login Page</title>
     <style>
         body,
         html {
@@ -97,7 +97,7 @@
             html {
                 justify-content: flex-start; /* Start content from the top */
                 align-items: center; /* Center horizontally */
-                transform: scale(0.9); /* Scale down to 90% */
+                transform: scale(0.78); /* Scale down to 90% */
                 transform-origin: top center; /* Ensure scaling is centered from the top */
                 height: auto; /* Allow height to adjust based on content */
             }
@@ -115,10 +115,10 @@
 
 <body>
     <div class="header">
-        <h1>Semester 2</h1>
+        <h1>Semester 3</h1>
     </div>
 
-    <div id="newSchedule1" style="margin-top: 20px; padding: 10px; background-color: #ffffff; color: #000000; width: 90%; margin-left: auto; margin-right: auto;">
+    <div id="newSchedule2" style="margin-top: 20px; padding: 10px; background-color: #ffffff; color: #000000; width: 90%; margin-left: auto; margin-right: auto;">
         <!-- New Schedule will be inserted here -->
     </div>
 
@@ -127,13 +127,7 @@
             <div class="input-group">
                 <label for="subjectCode">Select Subject:</label>
                 <select id="subjectCode" required>
-                    <option value="" disabled selected>Select Subject</option>
-                    <option value="uzw195">UZW195 - RADIO KAMPUS [CAMPUS RADIO]</option>
-                    <option value="ekt124">EKT124 - ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]</option>
-                    <option value="ekt103">EKT103 - KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]</option>
-                    <option value="ekt119">EKT119 - LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]</option>
-                    <option value="eqt102">EQT102 - MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]</option>
-                    <option value="ekt104">EKT104 - LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]</option>
+                    <!-- Options will be inserted here dynamically -->
                 </select>
                 <label for="subjectGrade">Select Grade:</label>
                 <select id="subjectGrade" required>
@@ -157,14 +151,13 @@
     </div>
 
     <div class="container-results" style="display: none;">
-        <h3>Semester 2</h3>
+        <h3>Semester 3</h3>
         <ul id="resultsList"></ul>
         <div id="nextPageButton">
-            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/sem2.html?username=user1&password=v'">Result</button>
+            <button id="resultButton">Result</button>
         </div>
     </div>
 
-    <!-- Include Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -188,26 +181,6 @@
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        // Mapping subject codes to full subject names
-        const subjectsSemester2 = [
-            { code: 'uzw195', name: 'UZW195 - RADIO KAMPUS [CAMPUS RADIO]', creditHour: 3 },
-            { code: 'ekt124', name: 'EKT124 - ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]', creditHour: 3 },
-            { code: 'ekt103', name: 'EKT103 - KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]', creditHour: 3 },
-            { code: 'ekt119', name: 'EKT119 - LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]', creditHour: 3 },
-            { code: 'eqt102', name: 'EQT102 - MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]', creditHour: 3 },
-            { code: 'ekt104', name: 'EKT104 - LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]', creditHour: 3 }
-        ];
-
-        // Mapping subject codes to full subject names
-        const subjectMapping = {
-            "uzw195": "UZW195 - RADIO KAMPUS [CAMPUS RADIO]",
-            "ekt124": "EKT124 - ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]",
-            "ekt103": "EKT103 - KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]",
-            "ekt119": "EKT119 - LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]",
-            "eqt102": "EQT102 - MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]",
-            "ekt104": "EKT104 - LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]"
-        };
-
         // Retrieve URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get('username');
@@ -220,7 +193,6 @@
             if (snapshot.exists()) {
                 const userData = snapshot.val();
                 if (userData.password === password) {
-                    // Store user ID in sessionStorage
                     sessionStorage.setItem('userId', username);
                     return userData;
                 } else {
@@ -237,20 +209,62 @@
             }
         }
 
+        // Subject mapping
+        const subjectMapping = {
+            "smb20102": "SMB20102 - BAHASA INGGERIS UNTUK KOMUNIKASI UMUM [ENGLISH FOR GENERAL COMMUNICATION] 2",
+            "nmj20003": "NMJ20003 - ALGORITHMA DAN STRUKTUR-STRUKTUR DATA [ALGORITHM AND DATA STRUCTURES]",
+            "smq22103": "SMQ22103 - MATEMATIK DISKRIT & LINEAR ALGEBRA [DISCRETE MATHEMATICS & LINEAR ALGEBRA]",
+            "nmj20404": "NMJ20404 - ELEKTRONIK DIGIT II [DIGITAL ELECTRONICS II]",
+            "nmj20904": "NMJ20904 - LITAR ELEKTRONIK ANALOG II [ANALOG ELECTRONIC CIRCUIT II]",
+            "uzw164": "UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I",
+            "uuw130": "UUW130 - FALSAFAH DAN ISU SEMASA",
+            "ekt102": "EKT102 - ASAS KEJURUTERAAN ELEKTRONIK",
+            "eqt101": "EQT101 - MATEMATIK KEJURUTERAAN I",
+            "ekt120": "EKT120 - PENGATURCARAAN KOMPUTER",
+            "ekt101": "EKT101 - TEORI LITAR ELEKTRIK"
+        };
+
+        let subjectsSemester3WithFailed = [];
+
         // Load user data and initialize the page
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             const userData = await verifyUser(username, password);
             if (userData) {
                 document.querySelector('.container-marks').style.display = 'block';
-                loadSubmittedData(userData);
+                loadSubmittedData(username);
             }
-        });
 
-        const storedSchedule = sessionStorage.getItem('newSchedule1');
-        if (storedSchedule) {
-            const newSchedule1Container = document.getElementById('newSchedule1');
-            newSchedule1Container.innerHTML = storedSchedule;
-        }
+            // Retrieve the stored schedule and display it
+            const storedSchedule = sessionStorage.getItem('newSchedule2');
+            const schedule1 = sessionStorage.getItem('schedule1');
+            const schedule2 = sessionStorage.getItem('schedule2');
+
+            if (storedSchedule) {
+            const newSchedule2Container = document.getElementById('newSchedule2');
+            newSchedule2Container.innerHTML = storedSchedule;
+
+                    if (schedule1 && schedule2) {
+                        const schedule1Container = document.createElement('div');
+                        schedule1Container.innerHTML = schedule1;
+                        newSchedule2Container.appendChild(schedule1Container);
+        
+                        const schedule2Container = document.createElement('div');
+                        schedule2Container.innerHTML = schedule2;
+                        newSchedule2Container.appendChild(schedule2Container);
+                    }
+                }
+
+            // Populate the subject select options based on subjectsSemester3WithFailed
+            subjectsSemester3WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester3WithFailed')) || [];
+
+            const subjectSelect = document.getElementById('subjectCode');
+            subjectsSemester3WithFailed.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.code.toLowerCase();
+                option.textContent = `${subject.code} - ${subject.name}`;
+                subjectSelect.appendChild(option);
+            });
+        });
 
         // Function to add or update subject grade in Realtime Database
         function addSubjectGrade(subjectCode, grade) {
@@ -262,7 +276,6 @@
 
             const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
             set(dbRef, { grade: grade }).then(() => {
-                console.log('Subject grade added or updated successfully.');
                 loadSubmittedData(userId); // Reload the submitted data to reflect the changes
             }).catch((error) => {
                 console.error('Error adding or updating subject grade:', error);
@@ -270,25 +283,25 @@
         }
 
         // Function to load submitted data and display it
-        function loadSubmittedData(userData) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-
+        function loadSubmittedData(userId) {
             const dbRef = ref(database, 'users/' + userId + '/subjects');
             get(dbRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     const resultsList = document.getElementById('resultsList');
                     resultsList.innerHTML = ''; // Clear existing data
+
+                    subjectsSemester3WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester3WithFailed')) || [];
+
                     snapshot.forEach((subjectSnapshot) => {
-                        const subject = subjectSnapshot.key;
+                        const subjectCode = subjectSnapshot.key;
                         const grade = subjectSnapshot.val().grade;
-                        if (subjectMapping.hasOwnProperty(subject)) {
-                            displaySubmittedData(subject, grade);
+                        const subject = subjectsSemester3WithFailed.find(sub => sub.code.toLowerCase() === subjectCode.toLowerCase());
+                        if (subject) {
+                            const subjectFullName = subjectMapping[subject.code.toLowerCase()] || subject.code; // Get full name from mapping
+                            displaySubmittedData(subjectFullName, grade);
                         }
                     });
+
                     document.querySelector('.container-results').style.display = 'block';
                     checkAllSubjectsSubmitted();
                 }
@@ -298,60 +311,59 @@
         }
 
         // Function to display submitted data on the page
-        function displaySubmittedData(subjectCode, grade) {
+        function displaySubmittedData(subjectFullName, grade) {
             const resultsList = document.getElementById('resultsList');
             const listItem = document.createElement('li');
             listItem.className = "subject-item";
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
             listItem.innerHTML = `
                 ${subjectFullName}: ${grade}
-                <button class="delete-button" onclick="deleteSubject('${subjectCode}')">Delete</button>
+                <button class="delete-button" onclick="deleteSubject('${subjectFullName}')">Delete</button>
             `;
             resultsList.appendChild(listItem);
             document.querySelector('.container-results').style.display = 'block';
         }
 
-        // Function to delete only the grade of a subject
-            async function deleteSubject(subjectCode) {
-                const userId = sessionStorage.getItem('userId');
-                if (!userId) {
-                    console.error('No user signed in');
-                    return;
-                }
+       // Combined function to delete the grade of a subject and the subject itself
+async function deleteSubject(subjectFullName) {
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        console.error('No user signed in');
+        return;
+    }
 
-                
-            // Ask for confirmation before deleting the subject
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-            const confirmation = confirm(`Are you sure you want to delete the grade for the subject ${subjectFullName}?`);
-            if (!confirmation) {
-                return; // Exit the function if the user cancels
-            }
+    const subjectCode = Object.keys(subjectMapping).find(key => subjectMapping[key] === subjectFullName);
+    if (!subjectCode) {
+        console.error('Subject code not found for:', subjectFullName);
+        return;
+    }
 
+    // Ask for confirmation before deleting the subject
+    const confirmation = confirm(`Are you sure you want to delete the grade for the subject ${subjectFullName}?`);
+    if (!confirmation) {
+        return; // Exit the function if the user cancels
+    }
 
-                const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
+    const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode.toLowerCase());
 
-                // Check if the subject exists in the database
-                const snapshot = await get(dbRef);
-                if (snapshot.exists()) {
-                    // If the subject exists, set the grade to null
-                    const gradeRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode + '/grade');
-                    set(gradeRef, null).then(() => {
-                        console.log('Grade removed successfully.');
-                        loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-                    }).catch((error) => {
-                        console.error('Error removing grade:', error);
-                    });
-                } else {
-                    console.error('Subject does not exist in the database.');
-                }
-            }
-
+    try {
+        // Check if the subject exists in the database
+        const snapshot = await get(dbRef);
+        if (snapshot.exists()) {
+            // If the subject exists, remove the subject and its grade
+            await remove(dbRef);
+            loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+        } else {
+            console.error('Subject does not exist in the database.');
+        }
+    } catch (error) {
+        console.error('Error removing subject and grade:', error);
+    }
+}
 
         // Function to check if all subjects are submitted
         function checkAllSubjectsSubmitted() {
             const userId = sessionStorage.getItem('userId');
-            const DetectSemester1 = sessionStorage.getItem('DetectSemester1');
-            console.log('DetectSemester1:', DetectSemester1); // Debug statement
+            const DetectSemester2 = sessionStorage.getItem('DetectSemester2');
 
             if (!userId) {
                 console.error('No user signed in');
@@ -364,20 +376,17 @@
                     let totalCredits = 0;
                     snapshot.forEach((subjectSnapshot) => {
                         const subjectCode = subjectSnapshot.key;
-                        const subject = subjectsSemester2.find(sub => sub.code === subjectCode);
+                        const subject = subjectsSemester3WithFailed.find(sub => sub.code.toLowerCase() === subjectCode.toLowerCase());
                         if (subject) {
                             totalCredits += subject.creditHour;
                         }
                     });
 
-                    console.log('Total Credits:', totalCredits); // Debug statement
-
-                    if ((DetectSemester1 === 'P1' && totalCredits >= 8 && totalCredits <= 12) ||
-                        (DetectSemester1 === 'Active' && totalCredits >= 17)) {
-                        console.log('Condition met for displaying Result button'); // Debug statement
+                    if ((DetectSemester2 === 'P1' && totalCredits >= 8 && totalCredits <= 12) || 
+                        (DetectSemester2 === 'Active' && totalCredits >= 14 && totalCredits <= 20) || 
+                        (DetectSemester2 === 'P2' && totalCredits >= 8 && totalCredits <= 10)) {
                         document.getElementById('nextPageButton').style.display = 'block';
                     } else {
-                        console.log('Condition not met for displaying Result button'); // Debug statement
                         document.getElementById('nextPageButton').style.display = 'none';
                     }
                 }
@@ -392,12 +401,31 @@
             const subjectCode = document.getElementById('subjectCode').value;
             const grade = document.getElementById('subjectGrade').value;
 
-            const subjectFullName = subjectMapping[subjectCode] || subjectCode; // Get full name from mapping
-            const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectFullName}?`);
+            const confirmation = confirm(`Are you sure you want to submit the grade ${grade} for the subject ${subjectCode}?`);
             if (confirmation) {
                 addSubjectGrade(subjectCode, grade);
             }
         });
+
+        // Event listener for Result button to store unselected subjects
+        document.getElementById('resultButton').addEventListener('click', () => {
+        const selectedSubjects = Array.from(document.querySelectorAll('#resultsList .subject-item'))
+        .map(item => item.textContent.split(':')[0].trim());
+
+        const unselectedSubjects = subjectsSemester3WithFailed.filter(subject => !selectedSubjects.includes(`${subject.code.toUpperCase()} - ${subject.name}`));
+        sessionStorage.setItem('UnusedSubjectsSemester3', JSON.stringify(unselectedSubjects));
+
+        // Debug: Print the unselectedSubjects array
+        console.log('Unselected Subjects:', unselectedSubjects);
+
+        // Log each unselected subject individually
+         unselectedSubjects.forEach((subject, index) => {
+        console.log(`Unselected Subject ${index + 1}:`, subject);
+    });
+
+        window.location.href = `https://aimanjitra.github.io/firebase/sem3.html?username=${username}&password=${password}`;
+});
+
 
         // Expose deleteSubject function to global scope
         window.deleteSubject = deleteSubject;
