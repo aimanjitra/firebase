@@ -153,7 +153,7 @@
         <h3>Semester 4 Results</h3>
         <ul id="resultsList"></ul>
         <div id="nextPageButton">
-            <button onclick="window.location.href='https://aimanjitra.github.io/firebase/sem4.html?username=user1&password=v'">Result</button>
+            <button onclick="window.location.href='C:/Users/DELL/Downloads/web/sem4.html?username=user1&password=v'">Result</button>
         </div>
     </div>
 
@@ -275,143 +275,177 @@
             });
         });
 
-        // Function to add or update subject grade in Realtime Database
         function addSubjectGrade(subjectCode, grade) {
-            const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-
-            const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
-            set(dbRef, { grade: grade }).then(() => {
-                console.log('Subject grade added or updated successfully.');
-                loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-            }).catch((error) => {
-                console.error('Error adding or updating subject grade:', error);
-            });
-        }
-
-        // Function to load submitted data and display it
-        function loadSubmittedData(userId) {
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const resultsList = document.getElementById('resultsList');
-                    resultsList.innerHTML = ''; // Clear existing data
-
-                    subjectsSemester4WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester4WithFailed')) || [];
-
-                    snapshot.forEach((subjectSnapshot) => {
-                        const subjectCode = subjectSnapshot.key;
-                        const grade = subjectSnapshot.val().grade;
-                        const subject = subjectsSemester4WithFailed.find(sub => sub.code.toLowerCase() === subjectCode.toLowerCase());
-                        if (subject) {
-                            const subjectFullName = subjectMapping[subject.code.toLowerCase()] || subject.code; // Get full name from mapping
-                            displaySubmittedData(subjectFullName, grade);
-                        }
-                    });
-
-                    document.querySelector('.container-results').style.display = 'block';
-                    checkAllSubjectsSubmitted();
-                }
-            }).catch((error) => {
-                console.error('Error loading submitted data:', error);
-            });
-        }
-
-        // Function to display submitted data on the page
-        function displaySubmittedData(subjectFullName, grade) {
-            const resultsList = document.getElementById('resultsList');
-            const listItem = document.createElement('li');
-            listItem.className = "subject-item";
-            listItem.innerHTML = `
-                ${subjectFullName}: ${grade}
-                <button class="delete-button" onclick="deleteSubject('${subjectFullName}')">Delete</button>
-            `;
-            resultsList.appendChild(listItem);
-            document.querySelector('.container-results').style.display = 'block';
-        }
-
-        // Function to delete only the grade of a subject
-async function deleteSubject(subjectFullName) {
     const userId = sessionStorage.getItem('userId');
     if (!userId) {
         console.error('No user signed in');
         return;
     }
 
-    const subjectCode = Object.keys(subjectMapping).find(key => subjectMapping[key] === subjectFullName);
-    if (!subjectCode) {
-        console.error('Subject code not found for:', subjectFullName);
-        return;
-    }
-
-    // Confirm before deleting the subject
-    const confirmation = confirm(`Are you sure you want to delete the subject ${subjectFullName}?`);
-    if (!confirmation) {
-        return;
-    }
-
-    const dbRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode.toLowerCase());
-
-    try {
-        // Check if the subject exists in the database
-        const snapshot = await get(dbRef);
+    const dbRef = ref(database, 'users/' + userId + '/subjects');
+    get(dbRef).then((snapshot) => {
+        let newSubjectCode = subjectCode.toLowerCase();
+        let existingGrade = null;
         if (snapshot.exists()) {
-            // If the subject exists, remove the subject and its grade
-            await remove(dbRef);
-            alert(`Subject ${subjectFullName} deleted successfully.`);
-            loadSubmittedData(userId); // Reload the submitted data to reflect the changes
-        } else {
-            console.error('Subject does not exist in the database.');
-            alert(`Subject ${subjectFullName} does not exist.`);
-        }
-    } catch (error) {
-        console.error('Error removing subject and grade:', error);
-        alert(`Error removing subject ${subjectFullName}.`);
-    }
-}
+            const subjects = snapshot.val();
+            const subjectKeys = Object.keys(subjects);
+            let maxVersion = 1;
 
-        // Function to check if all subjects are submitted
-        function checkAllSubjectsSubmitted() {
-            const userId = sessionStorage.getItem('userId');
-            const DetectSemester3 = sessionStorage.getItem('DetectSemester3');
-            console.log('DetectSemester3:', DetectSemester3); // Debug statement
-
-            if (!userId) {
-                console.error('No user signed in');
-                return;
-            }
-
-            const dbRef = ref(database, 'users/' + userId + '/subjects');
-            get(dbRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    let totalCredits = 0;
-                    snapshot.forEach((subjectSnapshot) => {
-                        const subjectCode = subjectSnapshot.key;
-                        const subject = subjectsSemester4WithFailed.find(sub => sub.code.toLowerCase() === subjectCode.toLowerCase());
-                        if (subject) {
-                            totalCredits += subject.creditHour;
-                        }
-                    });
-
-                    console.log('Total Credits:', totalCredits); // Debug statement
-
-                    if ((DetectSemester3 === 'P1' && totalCredits >= 8 && totalCredits <= 12) || 
-                        (DetectSemester3 === 'Active' && totalCredits >= 14 && totalCredits <= 20) || 
-                        (DetectSemester3 === 'P2' && totalCredits >= 8 && totalCredits <= 10)) {
-                        console.log('Condition met for displaying Result button'); // Debug statement
-                        document.getElementById('nextPageButton').style.display = 'block';
+            subjectKeys.forEach(key => {
+                const baseKey = key.split('_v')[0];
+                if (baseKey === subjectCode.toLowerCase()) {
+                    const versionMatch = key.match(/_v(\d+)$/);
+                    const version = versionMatch ? parseInt(versionMatch[1], 10) : 1;
+                    if (version >= maxVersion) {
+                        maxVersion = version + 1;
+                    }
+                    if (version > 1) {
+                        existingGrade = subjects[key]?.grade;
+                        newSubjectCode = key; // Focus on the latest version
                     } else {
-                        console.log('Condition not met for displaying Result button'); // Debug statement
-                        document.getElementById('nextPageButton').style.display = 'none';
+                        existingGrade = subjects[key]?.grade;
                     }
                 }
-            }).catch((error) => {
-                console.error('Error checking subjects:', error);
             });
+
+            if (existingGrade && ['D', 'D-', 'F'].includes(existingGrade) && newSubjectCode === subjectCode.toLowerCase()) {
+                newSubjectCode = `${subjectCode.toLowerCase()}_v${maxVersion}`;
+            }
         }
+
+        const newDbRef = ref(database, 'users/' + userId + '/subjects/' + newSubjectCode);
+        set(newDbRef, { grade: grade }).then(() => {
+            loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+        }).catch((error) => {
+            console.error('Error adding or updating subject grade:', error);
+        });
+    }).catch((error) => {
+        console.error('Error checking existing subject:', error);
+    });
+}
+
+
+
+function loadSubmittedData(userId) {
+    const dbRef = ref(database, 'users/' + userId + '/subjects');
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = ''; // Clear existing data
+
+            subjectsSemester4WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester4WithFailed')) || [];
+            let latestSubjects = {};
+
+            snapshot.forEach((subjectSnapshot) => {
+                const subjectCode = subjectSnapshot.key;
+                const grade = subjectSnapshot.val().grade;
+                const subjectBaseCode = subjectCode.split('_v')[0];
+                const subjectVersion = subjectCode.includes('_v') ? parseInt(subjectCode.split('_v')[1]) : 1;
+
+                if (!latestSubjects[subjectBaseCode] || (latestSubjects[subjectBaseCode].version < subjectVersion)) {
+                    latestSubjects[subjectBaseCode] = { subjectCode, grade, version: subjectVersion };
+                }
+            });
+
+            for (const baseCode in latestSubjects) {
+                const subjectData = latestSubjects[baseCode];
+                const subject = subjectsSemester4WithFailed.find(sub => sub.code.toLowerCase() === baseCode.toLowerCase());
+                if (subject && !['D', 'D-', 'F'].includes(subjectData.grade)) {
+                    const subjectFullName = subjectMapping[baseCode.toLowerCase()] || baseCode; // Get full name from mapping
+                    displaySubmittedData(subjectFullName, subjectData.grade, subjectData.subjectCode); // Pass the subjectCode for proper deletion
+                }
+            }
+
+            document.querySelector('.container-results').style.display = 'block';
+            checkAllSubjectsSubmitted();
+        }
+    }).catch((error) => {
+        console.error('Error loading submitted data:', error);
+    });
+}
+
+
+function displaySubmittedData(subjectFullName, grade, subjectCode) {
+    const resultsList = document.getElementById('resultsList');
+    const listItem = document.createElement('li');
+    listItem.className = "subject-item";
+    listItem.innerHTML = `
+        ${subjectFullName}: ${grade}
+        <button class="delete-button" onclick="deleteSubject('${subjectCode}')">Delete</button>
+    `;
+    resultsList.appendChild(listItem);
+    document.querySelector('.container-results').style.display = 'block';
+}
+
+
+async function deleteSubject(subjectCode) {
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        console.error('No user signed in');
+        return;
+    }
+
+    const confirmation = confirm(`Are you sure you want to delete the grade for the subject ${subjectCode.split('_v')[0]}?`);
+    if (!confirmation) {
+        return; // Exit the function if the user cancels
+    }
+
+    const subjectRef = ref(database, 'users/' + userId + '/subjects/' + subjectCode);
+    await remove(subjectRef).then(() => {
+        loadSubmittedData(userId); // Reload the submitted data to reflect the changes
+    }).catch((error) => {
+        console.error('Error removing subject:', error);
+    });
+}
+
+function checkAllSubjectsSubmitted() {
+    const userId = sessionStorage.getItem('userId');
+    const DetectSemester3 = sessionStorage.getItem('DetectSemester3');
+
+    if (!userId) {
+        console.error('No user signed in');
+        return;
+    }
+
+    const dbRef = ref(database, 'users/' + userId + '/subjects');
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            let totalCredits = 0;
+            let latestSubjects = {};
+
+            snapshot.forEach((subjectSnapshot) => {
+                const subjectCode = subjectSnapshot.key;
+                const grade = subjectSnapshot.val().grade;
+                const subjectBaseCode = subjectCode.split('_v')[0];
+                const subjectVersion = subjectCode.includes('_v') ? parseInt(subjectCode.split('_v')[1]) : 1;
+
+                if (!latestSubjects[subjectBaseCode] || (latestSubjects[subjectBaseCode].version < subjectVersion)) {
+                    latestSubjects[subjectBaseCode] = { grade, version: subjectVersion };
+                }
+            });
+
+            for (const baseCode in latestSubjects) {
+                const subjectData = latestSubjects[baseCode];
+                const subject = subjectsSemester4WithFailed.find(sub => sub.code.toLowerCase() === baseCode.toLowerCase());
+                if (subject && !['D', 'D-', 'F'].includes(subjectData.grade)) {
+                    totalCredits += subject.creditHour;
+                }
+            }
+
+            if ((DetectSemester3 === 'P1' && totalCredits >= 8 && totalCredits <= 12) || 
+                (DetectSemester3 === 'Active' && totalCredits >= 14 && totalCredits <= 20) || 
+                (DetectSemester3 === 'P2' && totalCredits >= 8 && totalCredits <= 10)) {
+                document.getElementById('nextPageButton').style.display = 'block';
+            } else {
+                document.getElementById('nextPageButton').style.display = 'none';
+            }
+        }
+    }).catch((error) => {
+        console.error('Error checking subjects:', error);
+    });
+}
+
+
 
         // Event listener for marks form submission
         document.getElementById('marksForm').addEventListener('submit', (e) => {
