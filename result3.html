@@ -277,8 +277,34 @@
                 "D-": 0.75,
                 "F": 0.00
             };
-            return gradeMapping[grade] >= 1.50 ? 'Pass' : 'Fail';
+            return gradeMapping[grade] >= 2 ? 'Pass' : 'Fail';
         }
+
+        const version2Subjects = {
+    "uzw164": "uzw164_v2",
+    "uuw130": "uuw130_v2",
+    "ekt102": "ekt102_v2",
+    "eqt101": "eqt101_v2",
+    "ekt120": "ekt120_v2",
+    "ekt101": "ekt101_v2"
+};
+
+const subjectMapping = {
+    "smb20102": "SMB20102 - BAHASA INGGERIS UNTUK KOMUNIKASI UMUM [ENGLISH FOR GENERAL COMMUNICATION] 2",
+    "nmj20003": "NMJ20003 - ALGORITHMA DAN STRUKTUR-STRUKTUR DATA [ALGORITHM AND DATA STRUCTURES]",
+    "smq22103": "SMQ22103 - MATEMATIK DISKRIT & LINEAR ALGEBRA [DISCRETE MATHEMATICS & LINEAR ALGEBRA]",
+    "nmj20404": "NMJ20404 - ELEKTRONIK DIGIT II [DIGITAL ELECTRONICS II]",
+    "nmj20904": "NMJ20904 - LITAR ELEKTRONIK ANALOG II [ANALOG ELECTRONIC CIRCUIT II]",
+    "uzw164_v2": "UZW164 - KURSUS PERSIJILAN BULAN SABIT MERAH MALAYSIA I v2",
+    "uuw130_v2": "UUW130 - FALSAFAH DAN ISU SEMASA v2",
+    "ekt102_v2": "EKT102 - ASAS KEJURUTERAAN ELEKTRONIK v2",
+    "eqt101_v2": "EQT101 - MATEMATIK KEJURUTERAAN I v2",
+    "ekt120_v2": "EKT120 - PENGATURCARAAN KOMPUTER v2",
+    "ekt101_v2": "EKT101 - TEORI LITAR ELEKTRIK v2"
+};
+
+
+
 
         // Function to get GPA points
         function getGpaPoints(grade) {
@@ -315,59 +341,60 @@
                 let totalCreditHours = 0;
                 let totalGpaPoints = 0;
                 let tableRows = '';
-
-                // Retrieve subjectsSemester3WithFailed from sessionStorage
                 const subjectsSemester3WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester3WithFailed')) || [];
+                const selectedSubjectsSemester3 = JSON.parse(sessionStorage.getItem('selectedSubjectsSemester3')) || [];
 
-                // Define subjects for Semester 2
-                const subjectsSemester2 = [
-                    { code: 'uzw195', name: 'RADIO KAMPUS [CAMPUS RADIO]', creditHour: 3 },
-                    { code: 'ekt124', name: 'ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]', creditHour: 3 },
-                    { code: 'ekt103', name: 'KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]', creditHour: 3 },
-                    { code: 'ekt119', name: 'LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]', creditHour: 3 },
-                    { code: 'eqt102', name: 'MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]', creditHour: 3 },
-                    { code: 'ekt104', name: 'LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]', creditHour: 3 }
-                ];
+        // Debug: Print selected subjects
+        console.log('Selected Subjects:', selectedSubjectsSemester3);
 
-                // Check if subjects from Semester 2 exist in the database
-                const subjectsNotTakenInSemester2 = [];
-                for (const subject of subjectsSemester2) {
-                    const subjectCodeLower = subject.code.toLowerCase();
-                    const subjectData = await get(child(ref(database), `users/${username}/subjects/${subjectCodeLower}`));
-                    if (!subjectData.exists() || !subjectData.val().grade) {
-                        subjectsNotTakenInSemester2.push(subject);
+        // Track latest version of subjects
+        let latestSubjects = {};
+
+        // Check if the subject has a grade and display it
+        subjectsSemester3WithFailed.forEach((subject, index) => {
+            const subjectCodeLower = subject.code.toLowerCase();
+            const mappedCode = version2Subjects[subjectCodeLower] || subjectCodeLower; // Use version 2 if mapped
+            const userSubjectData = userData.subjects[mappedCode];
+            if (userSubjectData && userSubjectData.grade) {
+                const grade = userSubjectData.grade;
+                const result = determineResult(grade);
+                const gpaPoints = getGpaPoints(grade);
+
+                // Determine if this is the latest version
+                const subjectBaseCode = mappedCode.split('_v')[0];
+                const subjectVersion = mappedCode.includes('_v') ? parseInt(mappedCode.split('_v')[1]) : 1;
+
+                if (!latestSubjects[subjectBaseCode] || (latestSubjects[subjectBaseCode].version < subjectVersion)) {
+                    latestSubjects[subjectBaseCode] = { grade, version: subjectVersion, subject, gpaPoints, result };
+                }
+            }
+        });
+
+        // Process the latest version of subjects
+        for (const baseCode in latestSubjects) {
+            const subjectData = latestSubjects[baseCode];
+            const { grade, subject, gpaPoints, result } = subjectData;
+            
+            // Use subjectMapping to get the subject name
+            const subjectFullName = subjectMapping[subject.code.toLowerCase()] || subject.code.toUpperCase();
+
+                    tableRows += `
+                        <tr>
+                            <td>${subject.code.toUpperCase()}</td>
+                            <td>${subject.name}</td>
+                            <td>${subject.creditHour}</td>
+                            <td>${grade}</td>
+                            <td>${result}</td>
+                        </tr>
+                    `;
+
+                    totalCreditHours += subject.creditHour;
+                    totalGpaPoints += gpaPoints * subject.creditHour;
+
+                    if (result === 'Fail') {
+                        failSubjectsSemester3List.push(subject);
                     }
                 }
-
-                // Combine subjectsNotTakenInSemester2 with subjectsSemester3WithFailed
-                const subjectsSemester4WithFailed = [...subjectsNotTakenInSemester2, ...subjectsSemester3WithFailed];
-
-                // Check if the subject has a grade and display it
-                subjectsSemester3WithFailed.forEach((subject, index) => {
-                    const userSubjectData = userData.subjects[subject.code.toLowerCase()];
-                    if (userSubjectData && userSubjectData.grade) {
-                        const grade = userSubjectData.grade;
-                        const result = determineResult(grade);
-                        const gpaPoints = getGpaPoints(grade);
-
-                        tableRows += `
-                            <tr>
-                                <td>${subject.code.toUpperCase()}</td>
-                                <td>${subject.name}</td>
-                                <td>${subject.creditHour}</td>
-                                <td>${grade}</td>
-                                <td>${result}</td>
-                            </tr>
-                        `;
-
-                        totalCreditHours += subject.creditHour;
-                        totalGpaPoints += gpaPoints * subject.creditHour;
-
-                        if (result === 'Fail') {
-                            failSubjectsSemester3List.push(subject);
-                        }
-                    }
-                });
 
                 // Calculate CGPA for Semester 3
                 const CGPA3 = totalGpaPoints / totalCreditHours;
@@ -392,9 +419,9 @@
                     const semesterStatusSemester2 = sessionStorage.getItem('DetectSemester2');
                     let detectSemester3;
                     if (semesterStatusSemester2 === 'P1') {
-                        detectSemester3 = (CGPA3 < 2) ? 'P2' : 'Active';
+                        detectSemester3 = (GPA3 < 2) ? 'P2' : 'Active';
                     } else {
-                        detectSemester3 = (CGPA3 < 2) ? 'P1' : 'Active';
+                        detectSemester3 = (GPA3 < 2) ? 'P1' : 'Active';
                     }
 
                     document.querySelector('table').insertAdjacentHTML('beforeend', tableRows);
@@ -446,6 +473,17 @@
                     schedule += '<p>For the next semester, you need to take the following subjects:</p>';
                     schedule += '<ul>';
 
+
+                     // Define subjects for Semester 2
+                const subjectsSemester2 = [
+                    { code: 'uzw195', name: 'RADIO KAMPUS [CAMPUS RADIO]', creditHour: 3 },
+                    { code: 'ekt124', name: 'ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]', creditHour: 3 },
+                    { code: 'ekt103', name: 'KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING]', creditHour: 3 },
+                    { code: 'ekt119', name: 'LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]', creditHour: 3 },
+                    { code: 'eqt102', name: 'MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]', creditHour: 3 },
+                    { code: 'ekt104', name: 'LITAR ELEKTRONIK ANALOG 1 [ANALOG ELECTRONIC CIRCUITS 1]', creditHour: 3 }
+                ];
+                
                     const subjectsSemester4 = [
                         { code: 'NMJ20703', name: 'ISYARAT DAN SISTEM [SIGNAL AND SYSTEMS]', creditHour: 3 },
                         { code: 'SMQ27203', name: 'KEBARANGKALIAN DAN STATISTIK [PROBABILITY AND STATISTICS]', creditHour: 3 },
@@ -460,6 +498,16 @@
                     // Assuming failSubjectsSemester3 is already defined and populated
                     console.log('Storing failed subjects for Semester 3:', failSubjectsSemester3List);
                     sessionStorage.setItem('failSubjectsSemester3', JSON.stringify(failSubjectsSemester3List));
+                    
+                    // Check if subjects from Semester 2 exist in the database
+                const subjectsNotTakenInSemester2 = [];
+                for (const subject of subjectsSemester2) {
+                    const subjectCodeLower = subject.code.toLowerCase();
+                    const subjectData = await get(child(ref(database), `users/${username}/subjects/${subjectCodeLower}`));
+                    if (!subjectData.exists() || !subjectData.val().grade) {
+                        subjectsNotTakenInSemester2.push(subject);
+                    }
+                }
 
                     // Combine failed subjects from Semester 2 and Semester 4
                     const subjectsSemester4WithFailed = [
@@ -484,7 +532,9 @@
                     }
 
                     schedule += `<p>This is all the subjects that you can choose according to your credit. ${creditLimitMessage}</p>`;
+
                     if (failSubjectsSemester2.length > 0 && subjectsNotTakenInSemester2.length > 0) {
+
                     // Prioritized subjects
                     const prioritizedSubjects = ['EKT104', 'SMQ27203', 'EKT119', 'EKT103', 'EKT124', 'NMJ21403', 'NMJ20703', 'EQT102', 'NMJ21803', 'NMJ21704'];
                     const prioritizedSubjectsLecturer = ['EKT124', 'EKT103', 'EKT119', 'EKT104', 'EQT102', 'NMJ21403', 'NMJ21803', 'NMJ21403', 'NMJ20703', 'NMJ21704'];
@@ -616,7 +666,6 @@
                         const editPageUrl = `https://aimanjitra.github.io/firebase/select03.html?username=${username}&password=${password}`;
                         window.location.href = editPageUrl;
                     });
-                  
                 } else {
                     console.error('CGPA2 is not found in sessionStorage');
                     alert('CGPA2 is not found or is invalid. Please ensure you have completed Semester 2 and try again.');
