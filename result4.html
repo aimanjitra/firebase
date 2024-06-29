@@ -298,7 +298,7 @@
                 "D-": 0.75,
                 "F": 0.00
             };
-            return gradeMapping[grade] >= 1.5 ? 'Pass' : 'Fail';
+            return gradeMapping[grade] >= 1.50? 'Pass' : 'Fail';
         }
 
         function getGpaPoints(grade) {
@@ -319,6 +319,22 @@
             return gradeMapping[grade];
         }
 
+        const version2Subjects = {
+    "ekt124": "ekt124_v2",
+    "ekt103": "ekt103_v2",
+    "ekt119": "ekt119_v2",
+    "eqt102": "eqt102_v2",
+    "ekt104": "ekt104_v2"
+};
+
+const subjectMapping = {
+    "ekt124_v2": "EKT124 - ELEKTRONIK DIGIT I [DIGITAL ELECTRONICS I]",
+    "ekt103_v2": "EKT103 - KEJURUTERAAN ELEKTRIK [ELECTRICAL ENGINEERING] ",
+    "ekt119_v2": "EKT119 - LITAR ELEKTRIK II [ELECTRIC CIRCUIT II]",
+    "eqt102_v2": "EQT102 - MATEMATIK KEJURUTERAAN II [ENGINEERING MATHEMATICS II]",
+    "ekt104_v2": "EKT104 - LITAR ELEKTRONIK ANALOG I [ANALOG ELECTRONIC CIRCUITS I]"
+};
+
         document.addEventListener('DOMContentLoaded', async function () {
             const failSubjectsSemester4List = [];
             const userData = await getUserData(username, password);
@@ -337,13 +353,42 @@
                 let tableRows = '';
 
                 const subjectsSemester4WithFailed = JSON.parse(sessionStorage.getItem('subjectsSemester4WithFailed')) || [];
+const selectedSubjectsSemester4 = JSON.parse(sessionStorage.getItem('selectedSubjectsSemester4')) || [];
 
-                subjectsSemester4WithFailed.forEach((subject, index) => {
-                    const userSubjectData = userData.subjects[subject.code.toLowerCase()];
-                    if (userSubjectData && userSubjectData.grade) {
-                        const grade = userSubjectData.grade;
-                        const result = determineResult(grade);
-                        const gpaPoints = getGpaPoints(grade);
+// Debug: Print selected subjects
+console.log('Selected Subjects:', selectedSubjectsSemester4);
+
+// Track latest version of subjects
+let latestSubjects = {};
+
+// Check if the subject has a grade and display it
+subjectsSemester4WithFailed.forEach((subject) => {
+    const subjectCodeLower = subject.code.toLowerCase();
+    const mappedCode = version2Subjects[subjectCodeLower] || subjectCodeLower; // Use version 2 if mapped
+    const userSubjectData = userData.subjects[mappedCode];
+
+    if (userSubjectData && userSubjectData.grade) {
+        const grade = userSubjectData.grade;
+        const result = determineResult(grade);
+        const gpaPoints = getGpaPoints(grade);
+
+        // Determine if this is the latest version
+        const subjectBaseCode = mappedCode.split('_v')[0];
+        const subjectVersion = mappedCode.includes('_v') ? parseInt(mappedCode.split('_v')[1]) : 1;
+
+        if (!latestSubjects[subjectBaseCode] || (latestSubjects[subjectBaseCode].version < subjectVersion)) {
+            latestSubjects[subjectBaseCode] = { grade, version: subjectVersion, subject, gpaPoints, result };
+        }
+    }
+});
+
+// Process the latest version of subjects
+for (const baseCode in latestSubjects) {
+    const subjectData = latestSubjects[baseCode];
+    const { grade, subject, gpaPoints, result } = subjectData;
+    
+    // Use subjectMapping to get the subject name
+    const subjectFullName = subjectMapping[subject.code.toLowerCase()] || subject.code.toUpperCase();
 
                         tableRows += `
                             <tr>
@@ -361,8 +406,8 @@
                         if (result === 'Fail') {
                             failSubjectsSemester4List.push(subject);
                         }
-                    }
-                });
+                    
+                };
 
                 const CGPA4 = totalGpaPoints / totalCreditHours;
 
