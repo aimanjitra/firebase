@@ -114,7 +114,7 @@
             font-size: 24px;
             position: absolute;
             top: 10px;
-            right: calc(50% - 40px);
+            right: calc(43% - 40px);
         }
         
         .battery-details {
@@ -296,21 +296,22 @@
             100% { background-position-x: 1440px; }
         }
 
-        /* Popup styles */
+        /* Full-screen popup styles */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: white;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .popup-overlay.active {
@@ -318,41 +319,25 @@
             visibility: visible;
         }
 
-        .popup {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 350px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .popup-overlay.active .popup {
-            transform: translateY(0);
-        }
-
-        .popup h2 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
-        .popup p {
-            color: var(--dark);
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            line-height: 1.5;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popup-title {
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .popup-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
             background: none;
             border: none;
-            font-size: 20px;
+            font-size: 24px;
             color: #607D8B;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -364,33 +349,187 @@
         }
 
         .popup-content {
-            max-height: 60vh;
+            flex: 1;
             overflow-y: auto;
-            padding-right: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Scrollbar styling */
-        .popup-content::-webkit-scrollbar {
-            width: 6px;
+        /* Logo splash screen */
+        .logo-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 0.5s ease;
         }
 
-        .popup-content::-webkit-scrollbar-track {
+        .logo-splash img {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        .logo-splash h2 {
+            color: var(--primary);
+            margin-top: 20px;
+        }
+
+        /* Graph Styles */
+        .graph-container {
+            width: 100%;
+            height: 250px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graph {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 20px;
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+
+        .graph-bar {
+            width: 30px;
+            background: var(--primary);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .graph-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        .graph-labels {
+            display: flex;
+            justify-content: space-around;
+            padding: 0 30px;
+            margin-top: 5px;
+        }
+
+        .graph-label {
+            font-size: 12px;
+            color: #607D8B;
+            width: 30px;
+            text-align: center;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .data-table tr:hover {
             background: #f1f1f1;
-            border-radius: 10px;
         }
 
-        .popup-content::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
+        /* About Page Styles */
+        .about-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
         }
 
-        .popup-content::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .specs-list {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .spec-item {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            width: 120px;
+            color: #607D8B;
+        }
+
+        .spec-value {
+            flex: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            .graph-bar {
+                width: 20px;
+            }
+            
+            .graph-labels {
+                padding: 0 20px;
+            }
+            
+            .graph-label {
+                width: 20px;
+                font-size: 10px;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- Logo Splash Screen -->
+    <div class="logo-splash">
+        <img src="image-generation_oMCapdmWBbZ1DIg8MDXz5peCkTf2_1749673400478_result.jpeg" alt="Panda Holding Battery">
+        <h2>Solar Charging System</h2>
+    </div>
+
     <div class="app-container">
         <div class="wave"></div>
         <div class="solar-animation"></div>
@@ -461,93 +600,237 @@
         </nav>
     </div>
 
-    <!-- Popup Overlays -->
-    <div class="popup-overlay" id="battery-popup">
-        <div class="popup">
-            <button class="popup-close">&times;</button>
-            <div class="popup-content">
-                <h2>Battery Information</h2>
-                <p>This panel displays real-time information about your battery status:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li><strong>Percentage</strong>: Current charge level (0-100%)</li>
-                    <li><strong>Voltage</strong>: Battery voltage in volts (V)</li>
-                    <li><strong>Current</strong>: Charging/discharging current in amps (A)</li>
-                    <li><strong>Power</strong>: Instantaneous power in watts (W)</li>
-                    <li><strong>Temperature</strong>: Battery temperature in Celsius</li>
-                </ul>
-                <p>When charging, the percentage will increase and the current will show a positive value. When discharging, the current will be negative.</p>
-            </div>
-        </div>
-    </div>
-
+    <!-- Full-screen Popups -->
     <div class="popup-overlay" id="load-popup">
-        <div class="popup">
+        <div class="popup-header">
+            <h2 class="popup-title">Load Management</h2>
             <button class="popup-close">&times;</button>
-            <div class="popup-content">
-                <h2>Load Management</h2>
-                <p>This section would display information about connected loads and power consumption:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li><strong>Connected Devices</strong>: List of devices drawing power</li>
-                    <li><strong>Power Consumption</strong>: Total load in watts</li>
-                    <li><strong>Priority Settings</strong>: Configure which devices get power first</li>
-                    <li><strong>Load Shedding</strong>: Automatic disconnection when battery is low</li>
-                </ul>
-                <p>In a real system, you could turn devices on/off from this panel to manage your power usage.</p>
+        </div>
+        
+        <div class="popup-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">Connected Devices</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Power (W)</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Refrigerator</td>
+                        <td>120</td>
+                        <td style="color: var(--primary);">ON</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Lighting</td>
+                        <td>40</td>
+                        <td style="color: var(--primary);">ON</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Water Pump</td>
+                        <td>200</td>
+                        <td style="color: var(--danger);">OFF</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Router</td>
+                        <td>15</td>
+                        <td style="color: var(--primary);">ON</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>TV</td>
+                        <td>80</td>
+                        <td style="color: var(--danger);">OFF</td>
+                        <td>Low</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Total Load:</span>
+                    <strong>175 W</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Available Power:</span>
+                    <strong>310 W</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Battery Backup:</span>
+                    <strong>8h 24m</strong>
+                </div>
             </div>
         </div>
+        
+        <nav class="nav-bar" style="margin-top: auto;">
+            <div class="nav-item" data-popup="battery">
+                <i class="fas fa-battery-quarter"></i>
+                <span>Battery</span>
+            </div>
+            <div class="nav-item active" data-popup="load">
+                <i class="fas fa-plug"></i>
+                <span>Load</span>
+            </div>
+            <div class="nav-item" data-popup="stats">
+                <i class="fas fa-chart-line"></i>
+                <span>Stats</span>
+            </div>
+            <div class="nav-item" data-popup="about">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </div>
+        </nav>
     </div>
 
     <div class="popup-overlay" id="stats-popup">
-        <div class="popup">
+        <div class="popup-header">
+            <h2 class="popup-title">System Statistics</h2>
             <button class="popup-close">&times;</button>
-            <div class="popup-content">
-                <h2>System Statistics</h2>
-                <p>Historical data and performance metrics:</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li><strong>Daily Generation</strong>: Solar power generated today</li>
-                    <li><strong>Monthly Trends</strong>: Performance over time</li>
-                    <li><strong>Efficiency</strong>: System conversion efficiency</li>
-                    <li><strong>Battery Health</strong>: Capacity degradation over time</li>
-                </ul>
-                <p>This data helps you understand your system's performance and identify any issues.</p>
-                <div style="background: #f5f5f5; padding: 10px; border-radius: 8px; margin-top: 15px;">
-                    <p><strong>Today's Summary</strong></p>
-                    <p>Generated: 2.4 kWh<br>
-                    Consumed: 1.8 kWh<br>
-                    Efficiency: 78%</p>
+        </div>
+        
+        <div class="popup-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">Energy Generation (Last 7 Days)</h3>
+            <div class="graph-container">
+                <div class="graph">
+                    <div class="graph-bar" style="height: 30%;" data-value="2.1kWh"></div>
+                    <div class="graph-bar" style="height: 45%;" data-value="3.2kWh"></div>
+                    <div class="graph-bar" style="height: 60%;" data-value="4.3kWh"></div>
+                    <div class="graph-bar" style="height: 80%;" data-value="5.8kWh"></div>
+                    <div class="graph-bar" style="height: 65%;" data-value="4.7kWh"></div>
+                    <div class="graph-bar" style="height: 50%;" data-value="3.9kWh"></div>
+                    <div class="graph-bar" style="height: 40%;" data-value="2.8kWh"></div>
+                </div>
+                <div class="graph-labels">
+                    <span class="graph-label">Mon</span>
+                    <span class="graph-label">Tue</span>
+                    <span class="graph-label">Wed</span>
+                    <span class="graph-label">Thu</span>
+                    <span class="graph-label">Fri</span>
+                    <span class="graph-label">Sat</span>
+                    <span class="graph-label">Sun</span>
                 </div>
             </div>
+            
+            <h3 style="margin: 25px 0 15px; color: var(--primary);">System Efficiency</h3>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Panel Efficiency:</span>
+                <strong>85%</strong>
+            </div>
+            <div style="height: 10px; background: #eee; border-radius: 5px; margin-bottom: 15px;">
+                <div style="width: 85%; height: 100%; background: var(--primary); border-radius: 5px;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Battery Efficiency:</span>
+                <strong>92%</strong>
+            </div>
+            <div style="height: 10px; background: #eee; border-radius: 5px;">
+                <div style="width: 92%; height: 100%; background: var(--secondary); border-radius: 5px;"></div>
+            </div>
         </div>
+        
+        <nav class="nav-bar" style="margin-top: auto;">
+            <div class="nav-item" data-popup="battery">
+                <i class="fas fa-battery-quarter"></i>
+                <span>Battery</span>
+            </div>
+            <div class="nav-item" data-popup="load">
+                <i class="fas fa-plug"></i>
+                <span>Load</span>
+            </div>
+            <div class="nav-item active" data-popup="stats">
+                <i class="fas fa-chart-line"></i>
+                <span>Stats</span>
+            </div>
+            <div class="nav-item" data-popup="about">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </div>
+        </nav>
     </div>
 
     <div class="popup-overlay" id="about-popup">
-        <div class="popup">
+        <div class="popup-header">
+            <h2 class="popup-title">About System</h2>
             <button class="popup-close">&times;</button>
-            <div class="popup-content">
-                <h2>About This System</h2>
-                <p>Solar Charging Dashboard v1.0</p>
-                <p>This application monitors and manages your solar charging system, providing real-time data and control over your power usage.</p>
-                
-                <h3 style="margin-top: 20px;">System Specifications</h3>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li><strong>Solar Panels</strong>: 300W total capacity</li>
-                    <li><strong>Battery</strong>: 12V 100Ah Lithium-ion</li>
-                    <li><strong>Charge Controller</strong>: MPPT 20A</li>
-                    <li><strong>Inverter</strong>: 500W Pure Sine Wave</li>
-                </ul>
-                
-                <h3>Safety Information</h3>
-                <p>Always follow electrical safety guidelines when working with your system. Regular maintenance ensures optimal performance.</p>
-                
-                <div style="margin-top: 20px; text-align: center; color: #607D8B;">
-                    <p>&copy; 2023 SolarTech Solutions</p>
+        </div>
+        
+        <div class="popup-content">
+            <div class="about-logo">
+                <i class="fas fa-solar-panel"></i>
+            </div>
+            <h3 style="text-align: center;">Solar Charging Dashboard</h3>
+            <p style="text-align: center; color: #607D8B; margin: 10px 0 20px;">Version 2.1.0</p>
+            
+            <div class="specs-list">
+                <div class="spec-item">
+                    <span class="spec-label">System Type:</span>
+                    <span class="spec-value">Off-grid Solar</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Solar Panels:</span>
+                    <span class="spec-value">4 × 100W Monocrystalline</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Battery Bank:</span>
+                    <span class="spec-value">24V 200Ah Lithium-ion</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Charge Controller:</span>
+                    <span class="spec-value">MPPT 40A</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Inverter:</span>
+                    <span class="spec-value">2000W Pure Sine Wave</span>
                 </div>
             </div>
+            
+            <div style="margin: 25px 0; padding: 15px; background: #f9f9f9; border-radius: 12px;">
+                <p style="margin-bottom: 10px; font-weight: 600;">System Performance</p>
+                <p style="font-size: 14px; color: #607D8B;">
+                    Total Energy Generated: 1,842 kWh<br>
+                    CO2 Emissions Saved: 1.2 tons<br>
+                    System Uptime: 99.8%
+                </p>
+            </div>
         </div>
+        
+        <nav class="nav-bar" style="margin-top: auto;">
+            <div class="nav-item" data-popup="battery">
+                <i class="fas fa-battery-quarter"></i>
+                <span>Battery</span>
+            </div>
+            <div class="nav-item" data-popup="load">
+                <i class="fas fa-plug"></i>
+                <span>Load</span>
+            </div>
+            <div class="nav-item" data-popup="stats">
+                <i class="fas fa-chart-line"></i>
+                <span>Stats</span>
+            </div>
+            <div class="nav-item active" data-popup="about">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </div>
+        </nav>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Hide splash screen after 2 seconds
+            setTimeout(() => {
+                document.querySelector('.logo-splash').style.opacity = '0';
+                setTimeout(() => {
+                    document.querySelector('.logo-splash').style.display = 'none';
+                }, 500);
+            }, 2000);
+
             const batteryLevel = document.getElementById('battery-level');
             const batteryPercentage = document.getElementById('battery-percentage');
             
@@ -558,7 +841,7 @@
             let percentage = 0;
             const interval = setInterval(() => {
                 percentage += 1;
-                if(percentage > 100) {
+                if(percentage > 99) {
                     clearInterval(interval);
                     // After reaching 100%, simulate discharge after 5 seconds
                     setTimeout(() => {
@@ -621,29 +904,21 @@
                     // If not the battery tab (main view), show the corresponding popup
                     if(popupId !== 'battery') {
                         document.getElementById(`${popupId}-popup`).classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = 'auto';
                     }
                 });
             });
             
             closeButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Find parent popup and hide it
-                    this.closest('.popup-overlay').classList.remove('active');
+                    // Hide all popups
+                    popups.forEach(popup => popup.classList.remove('active'));
                     // Set battery tab as active
                     navItems.forEach(navItem => navItem.classList.remove('active'));
                     document.querySelector('[data-popup="battery"]').classList.add('active');
-                });
-            });
-            
-            // Close popup when clicking outside
-            popups.forEach(popup => {
-                popup.addEventListener('click', function(e) {
-                    if(e.target === this) {
-                        this.classList.remove('active');
-                        // Set battery tab as active
-                        navItems.forEach(navItem => navItem.classList.remove('active'));
-                        document.querySelector('[data-popup="battery"]').classList.add('active');
-                    }
+                    document.body.style.overflow = 'auto';
                 });
             });
         });
