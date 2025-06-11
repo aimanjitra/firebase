@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar Charging Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -20,27 +20,24 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
         
         body {
             background-color: #f5f5f5;
             color: var(--dark);
-            width: 100%;
+            max-width: 414px;
             margin: 0 auto;
             min-height: 100vh;
             position: relative;
-            overflow-x: hidden;
-            touch-action: manipulation;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
         
         .app-container {
             background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            max-width: 100%;
         }
         
         .app-container::before {
@@ -62,36 +59,49 @@
         
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             position: relative;
             z-index: 1;
         }
         
         h1 {
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 24px;
             font-weight: 700;
             margin-bottom: 5px;
-        }
-        
-        h2 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--dark);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
         .battery-status {
             background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             position: relative;
             z-index: 1;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .battery-status:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .battery-status::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            opacity: 0.3;
         }
         
         .battery-percentage {
-            font-size: 2.5rem;
+            font-size: 48px;
             font-weight: 700;
             text-align: center;
             margin: 10px 0;
@@ -101,44 +111,50 @@
         
         .battery-percentage::after {
             content: "%";
-            font-size: 1.2rem;
+            font-size: 24px;
             position: absolute;
-            top: 5px;
-            right: calc(50% - 35px);
+            top: 10px;
+            right: calc(50% - 40px);
         }
         
         .battery-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .detail-card {
             background: rgba(236, 239, 241, 0.5);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-card:hover {
+            background: rgba(236, 239, 241, 1);
+            transform: scale(1.02);
         }
         
         .detail-card h3 {
-            font-size: 0.8rem;
+            font-size: 14px;
             color: #607D8B;
             margin-bottom: 5px;
         }
         
         .detail-card p {
-            font-size: 1rem;
+            font-size: 18px;
             font-weight: 600;
             color: var(--dark);
         }
         
         .status-card {
             background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             position: relative;
             z-index: 1;
         }
@@ -147,8 +163,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
+            margin-bottom: 15px;
         }
         
         .status-item:last-child {
@@ -156,10 +171,12 @@
         }
         
         .status-label {
+            font-size: 16px;
             color: #607D8B;
         }
         
         .status-value {
+            font-size: 18px;
             font-weight: 600;
         }
         
@@ -179,14 +196,11 @@
             display: flex;
             justify-content: space-around;
             background: white;
-            border-radius: 12px;
-            padding: 12px 5px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            position: fixed;
-            bottom: 10px;
-            left: 15px;
-            right: 15px;
-            z-index: 10;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
         }
         
         .nav-item {
@@ -194,8 +208,9 @@
             flex-direction: column;
             align-items: center;
             color: #607D8B;
-            font-size: 0.7rem;
-            padding: 5px 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .nav-item.active {
@@ -203,28 +218,52 @@
         }
         
         .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item:hover {
+            transform: translateY(-3px);
+            color: var(--primary);
+        }
+        
+        .solar-animation {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #FFEB3B 0%, #FFC107 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #FFC107;
+            animation: solar-pulse 3s infinite alternate;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        @keyframes solar-pulse {
+            0% { transform: scale(0.9); opacity: 0.3; }
+            100% { transform: scale(1.1); opacity: 0.5; }
         }
         
         .battery-icon {
             position: relative;
-            width: 60px;
-            height: 30px;
-            border: 2px solid var(--dark);
-            border-radius: 5px;
+            width: 80px;
+            height: 40px;
+            border: 3px solid var(--dark);
+            border-radius: 8px;
             margin: 0 auto 10px;
         }
         
         .battery-icon::after {
             content: "";
             position: absolute;
-            right: -5px;
-            top: 8px;
-            width: 3px;
-            height: 10px;
+            right: -8px;
+            top: 10px;
+            width: 5px;
+            height: 15px;
             background: var(--dark);
-            border-radius: 0 2px 2px 0;
+            border-radius: 0 3px 3px 0;
         }
         
         .battery-level {
@@ -234,25 +273,44 @@
             bottom: 2px;
             width: 0%;
             background: var(--primary);
-            border-radius: 3px;
+            border-radius: 4px;
             transition: width 1s ease;
         }
         
-        /* Full-screen popup styles */
+        .wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(76, 175, 80, 0.1)" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+            animation: wave 8s linear infinite;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1440px; }
+        }
+
+        /* Popup styles */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: white;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            overflow-y: auto;
-            padding: 15px;
-            overscroll-behavior: contain;
         }
 
         .popup-overlay.active {
@@ -260,190 +318,85 @@
             visibility: visible;
         }
 
-        .popup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+        .popup {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 350px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .popup-title {
-            font-size: 1.3rem;
+        .popup-overlay.active .popup {
+            transform: translateY(0);
+        }
+
+        .popup h2 {
             color: var(--primary);
-            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .popup p {
+            color: var(--dark);
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 20px;
             color: #607D8B;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        /* Graph Styles */
-        .graph-container {
-            width: 100%;
-            height: 200px;
-            background: #f9f9f9;
+        .popup-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .popup-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Scrollbar styling */
+        .popup-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .popup-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
             border-radius: 10px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
         }
 
-        .graph {
-            position: absolute;
-            bottom: 25px;
-            left: 20px;
-            right: 15px;
-            height: 150px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-        }
-
-        .graph-bar {
-            width: 20px;
-            background: var(--primary);
-            border-radius: 4px 4px 0 0;
-            position: relative;
-        }
-
-        .graph-bar::after {
-            content: attr(data-value);
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem;
-            color: var(--dark);
-        }
-
-        .graph-labels {
-            display: flex;
-            justify-content: space-around;
-            padding: 0 20px;
-            margin-top: 5px;
-            font-size: 0.7rem;
-        }
-
-        /* Table Styles */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 0.8rem;
-        }
-
-        .data-table th {
-            background: var(--primary);
-            color: white;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .data-table td {
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.8rem;
-        }
-
-        .data-table tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-
-        /* About Page Styles */
-        .about-content {
-            text-align: center;
-        }
-
-        .about-logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 10px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-        }
-
-        .specs-list {
-            margin: 15px 0;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        .spec-item {
-            display: flex;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .spec-label {
-            font-weight: 600;
-            width: 100px;
-            color: #607D8B;
-            font-size: 0.8rem;
-        }
-
-        .spec-value {
-            flex: 1;
-            font-size: 0.8rem;
-        }
-        
-        /* Buttons */
-        .btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        
-        /* Info cards */
-        .info-card {
-            margin: 15px 0;
-            padding: 12px;
-            background: #f9f9f9;
+        .popup-content::-webkit-scrollbar-thumb {
+            background: #888;
             border-radius: 10px;
-            font-size: 0.8rem;
         }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 350px) {
-            .battery-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .graph-bar {
-                width: 15px;
-            }
+
+        .popup-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
+        <div class="wave"></div>
+        <div class="solar-animation"></div>
+        
         <header>
-            <h1>Solar Charging</h1>
+            <h1>Solar Charging App</h1>
         </header>
         
         <section class="battery-status">
@@ -467,7 +420,7 @@
                     <p id="power">0.0 W</p>
                 </div>
                 <div class="detail-card">
-                    <h3>Temp</h3>
+                    <h3>Temperature</h3>
                     <p>26°C</p>
                 </div>
             </div>
@@ -475,11 +428,11 @@
         
         <section class="status-card">
             <div class="status-item">
-                <span class="status-label">Charging</span>
+                <span class="status-label">Charging Status</span>
                 <span class="status-value not-charging" id="charging-status">Not Charging</span>
             </div>
             <div class="status-item">
-                <span class="status-label">Efficiency</span>
+                <span class="status-label">Solar Efficiency</span>
                 <span class="status-value efficiency-low" id="solar-efficiency">0.0%</span>
             </div>
             <div class="status-item">
@@ -508,225 +461,88 @@
         </nav>
     </div>
 
-    <!-- Full-screen Popups -->
+    <!-- Popup Overlays -->
     <div class="popup-overlay" id="battery-popup">
-        <div class="popup-header">
-            <h2 class="popup-title">Battery</h2>
+        <div class="popup">
             <button class="popup-close">&times;</button>
-        </div>
-        
-        <div class="battery-status" style="margin-top: 0;">
-            <div class="battery-icon">
-                <div class="battery-level" style="width: 0%;"></div>
-            </div>
-            <div class="battery-percentage">0</div>
-            
-            <div class="battery-details">
-                <div class="detail-card">
-                    <h3>Voltage</h3>
-                    <p>0.94 V</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Current</h3>
-                    <p>-0.3 A</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Power</h3>
-                    <p>0.0 W</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Temp</h3>
-                    <p>26°C</p>
-                </div>
+            <div class="popup-content">
+                <h2>Battery Information</h2>
+                <p>This panel displays real-time information about your battery status:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li><strong>Percentage</strong>: Current charge level (0-100%)</li>
+                    <li><strong>Voltage</strong>: Battery voltage in volts (V)</li>
+                    <li><strong>Current</strong>: Charging/discharging current in amps (A)</li>
+                    <li><strong>Power</strong>: Instantaneous power in watts (W)</li>
+                    <li><strong>Temperature</strong>: Battery temperature in Celsius</li>
+                </ul>
+                <p>When charging, the percentage will increase and the current will show a positive value. When discharging, the current will be negative.</p>
             </div>
         </div>
-        
-        <div class="status-card">
-            <div class="status-item">
-                <span class="status-label">Health</span>
-                <span class="status-value">92%</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Cycles</span>
-                <span class="status-value">142</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Type</span>
-                <span class="status-value">Li-ion</span>
-            </div>
-        </div>
-        
-        <p class="info-card">
-            Battery details show real-time information about your energy storage system. 
-            Maintain above 20% charge for optimal battery life.
-        </p>
     </div>
 
     <div class="popup-overlay" id="load-popup">
-        <div class="popup-header">
-            <h2 class="popup-title">Load</h2>
+        <div class="popup">
             <button class="popup-close">&times;</button>
-        </div>
-        
-        <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Devices</h3>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Device</th>
-                    <th>Power</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Fridge</td>
-                    <td>120W</td>
-                    <td style="color: var(--primary);">ON</td>
-                </tr>
-                <tr>
-                    <td>Lights</td>
-                    <td>40W</td>
-                    <td style="color: var(--primary);">ON</td>
-                </tr>
-                <tr>
-                    <td>Pump</td>
-                    <td>200W</td>
-                    <td style="color: var(--danger);">OFF</td>
-                </tr>
-                <tr>
-                    <td>Router</td>
-                    <td>15W</td>
-                    <td style="color: var(--primary);">ON</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="info-card">
-            <div class="info-row">
-                <span>Total Load:</span>
-                <strong>175 W</strong>
-            </div>
-            <div class="info-row">
-                <span>Available:</span>
-                <strong>310 W</strong>
-            </div>
-            <div class="info-row">
-                <span>Backup:</span>
-                <strong>8h 24m</strong>
+            <div class="popup-content">
+                <h2>Load Management</h2>
+                <p>This section would display information about connected loads and power consumption:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li><strong>Connected Devices</strong>: List of devices drawing power</li>
+                    <li><strong>Power Consumption</strong>: Total load in watts</li>
+                    <li><strong>Priority Settings</strong>: Configure which devices get power first</li>
+                    <li><strong>Load Shedding</strong>: Automatic disconnection when battery is low</li>
+                </ul>
+                <p>In a real system, you could turn devices on/off from this panel to manage your power usage.</p>
             </div>
         </div>
-        
-        <button class="btn">Manage Load Priority</button>
     </div>
 
     <div class="popup-overlay" id="stats-popup">
-        <div class="popup-header">
-            <h2 class="popup-title">Stats</h2>
+        <div class="popup">
             <button class="popup-close">&times;</button>
-        </div>
-        
-        <h3 style="margin-bottom: 10px; color: var(--primary); font-size: 1rem;">Energy (7 Days)</h3>
-        <div class="graph-container">
-            <div class="graph">
-                <div class="graph-bar" style="height: 30%;" data-value="2.1kWh"></div>
-                <div class="graph-bar" style="height: 45%;" data-value="3.2kWh"></div>
-                <div class="graph-bar" style="height: 60%;" data-value="4.3kWh"></div>
-                <div class="graph-bar" style="height: 80%;" data-value="5.8kWh"></div>
-                <div class="graph-bar" style="height: 65%;" data-value="4.7kWh"></div>
-                <div class="graph-bar" style="height: 50%;" data-value="3.9kWh"></div>
-                <div class="graph-bar" style="height: 40%;" data-value="2.8kWh"></div>
-            </div>
-            <div class="graph-labels">
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
-            </div>
-        </div>
-        
-        <h3 style="margin: 15px 0 10px; color: var(--primary); font-size: 1rem;">Efficiency</h3>
-        <div class="info-card">
-            <div class="info-row">
-                <span>Panel:</span>
-                <strong>85%</strong>
-            </div>
-            <div style="height: 6px; background: #eee; border-radius: 3px; margin: 5px 0 10px;">
-                <div style="width: 85%; height: 100%; background: var(--primary); border-radius: 3px;"></div>
-            </div>
-            
-            <div class="info-row">
-                <span>Battery:</span>
-                <strong>92%</strong>
-            </div>
-            <div style="height: 6px; background: #eee; border-radius: 3px; margin: 5px 0 10px;">
-                <div style="width: 92%; height: 100%; background: var(--secondary); border-radius: 3px;"></div>
-            </div>
-            
-            <div class="info-row">
-                <span>System:</span>
-                <strong>78%</strong>
-            </div>
-            <div style="height: 6px; background: #eee; border-radius: 3px; margin: 5px 0 0;">
-                <div style="width: 78%; height: 100%; background: #FF9800; border-radius: 3px;"></div>
+            <div class="popup-content">
+                <h2>System Statistics</h2>
+                <p>Historical data and performance metrics:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li><strong>Daily Generation</strong>: Solar power generated today</li>
+                    <li><strong>Monthly Trends</strong>: Performance over time</li>
+                    <li><strong>Efficiency</strong>: System conversion efficiency</li>
+                    <li><strong>Battery Health</strong>: Capacity degradation over time</li>
+                </ul>
+                <p>This data helps you understand your system's performance and identify any issues.</p>
+                <div style="background: #f5f5f5; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                    <p><strong>Today's Summary</strong></p>
+                    <p>Generated: 2.4 kWh<br>
+                    Consumed: 1.8 kWh<br>
+                    Efficiency: 78%</p>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="popup-overlay" id="about-popup">
-        <div class="popup-header">
-            <h2 class="popup-title">About</h2>
+        <div class="popup">
             <button class="popup-close">&times;</button>
-        </div>
-        
-        <div class="about-content">
-            <div class="about-logo">
-                <i class="fas fa-solar-panel"></i>
-            </div>
-            <h3 style="font-size: 1.1rem;">Solar Dashboard</h3>
-            <p style="color: #607D8B; margin: 5px 0 15px; font-size: 0.8rem;">v2.1.0</p>
-            
-            <div class="specs-list">
-                <div class="spec-item">
-                    <span class="spec-label">System:</span>
-                    <span class="spec-value">Off-grid Solar</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Panels:</span>
-                    <span class="spec-value">4 × 100W</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Battery:</span>
-                    <span class="spec-value">24V 200Ah</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Controller:</span>
-                    <span class="spec-value">MPPT 40A</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Inverter:</span>
-                    <span class="spec-value">2000W</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Installed:</span>
-                    <span class="spec-value">Jun 2023</span>
+            <div class="popup-content">
+                <h2>About This System</h2>
+                <p>Solar Charging Dashboard v1.0</p>
+                <p>This application monitors and manages your solar charging system, providing real-time data and control over your power usage.</p>
+                
+                <h3 style="margin-top: 20px;">System Specifications</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li><strong>Solar Panels</strong>: 300W total capacity</li>
+                    <li><strong>Battery</strong>: 12V 100Ah Lithium-ion</li>
+                    <li><strong>Charge Controller</strong>: MPPT 20A</li>
+                    <li><strong>Inverter</strong>: 500W Pure Sine Wave</li>
+                </ul>
+                
+                <h3>Safety Information</h3>
+                <p>Always follow electrical safety guidelines when working with your system. Regular maintenance ensures optimal performance.</p>
+                
+                <div style="margin-top: 20px; text-align: center; color: #607D8B;">
+                    <p>&copy; 2023 SolarTech Solutions</p>
                 </div>
             </div>
-            
-            <div class="info-card" style="text-align: left;">
-                <p style="margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Performance</p>
-                <p style="font-size: 0.8rem; color: #607D8B; line-height: 1.4;">
-                    Generated: 1,842 kWh<br>
-                    CO2 Saved: 1.2 tons<br>
-                    Uptime: 99.8%
-                </p>
-            </div>
-            
-            <p style="font-size: 0.7rem; color: #607D8B; margin-top: 15px;">
-                &copy; 2023 SolarTech
-            </p>
         </div>
     </div>
 
@@ -805,27 +621,30 @@
                     // If not the battery tab (main view), show the corresponding popup
                     if(popupId !== 'battery') {
                         document.getElementById(`${popupId}-popup`).classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow = 'auto';
                     }
                 });
             });
             
             closeButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Hide all popups
-                    popups.forEach(popup => popup.classList.remove('active'));
+                    // Find parent popup and hide it
+                    this.closest('.popup-overlay').classList.remove('active');
                     // Set battery tab as active
                     navItems.forEach(navItem => navItem.classList.remove('active'));
                     document.querySelector('[data-popup="battery"]').classList.add('active');
-                    document.body.style.overflow = 'auto';
                 });
             });
             
-            // Prevent zooming on mobile
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
+            // Close popup when clicking outside
+            popups.forEach(popup => {
+                popup.addEventListener('click', function(e) {
+                    if(e.target === this) {
+                        this.classList.remove('active');
+                        // Set battery tab as active
+                        navItems.forEach(navItem => navItem.classList.remove('active'));
+                        document.querySelector('[data-popup="battery"]').classList.add('active');
+                    }
+                });
             });
         });
     </script>
